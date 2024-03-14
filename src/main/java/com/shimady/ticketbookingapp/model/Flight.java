@@ -38,8 +38,8 @@ public class Flight {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof Flight
-                && ((Flight) o).getId().equals(id);
+        return o instanceof Flight f
+                && f.getId().equals(id);
     }
 
     @Override

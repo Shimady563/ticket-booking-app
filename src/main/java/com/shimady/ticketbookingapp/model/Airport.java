@@ -59,9 +59,9 @@ public class Airport {
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof Airport
-                && ((Airport) o).getName().equals(name)
-                && ((Airport) o).getCode().equals(code);
+        return o instanceof Airport a
+                && a.getName().equals(name)
+                && a.getCode().equals(code);
     }
 
     @Override
