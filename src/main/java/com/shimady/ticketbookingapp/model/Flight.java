@@ -8,16 +8,15 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "Flight")
+@Table(name = "flight")
 public class Flight {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "departure_time")
@@ -27,34 +26,15 @@ public class Flight {
     private LocalDateTime arrivalTime;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "source_airport_id")
     private Airport sourceAirport;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "destination_airport_id")
     private Airport destinationAirport;
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Flight f
-                && f.getId().equals(id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Flight{" +
-                "id=" + id +
-                ", departureTime=" + departureTime +
-                ", arrivalTime=" + arrivalTime +
-                ", sourceAirport=" + sourceAirport +
-                ", destinationAirport=" + destinationAirport +
-                '}';
-    }
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private Set<Seat> seats;
 }

@@ -10,31 +10,27 @@ import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Entity
-@Table(name = "Airport")
+@Table(name = "airport")
 public class Airport {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "name", nullable = false)
-    @NaturalId
     private String name;
 
     @Column(name = "city", nullable = false)
     private String city;
 
     @Column(name = "code", nullable = false)
-    @NaturalId
     private String code;
 
-    @OneToMany(mappedBy = "sourceAirport")
+    @OneToMany(mappedBy = "sourceAirport", fetch = FetchType.LAZY)
     private Set<Flight> departingFlights;
 
-    @OneToMany(mappedBy = "destinationAirport")
+    @OneToMany(mappedBy = "destinationAirport", fetch = FetchType.LAZY)
     private Set<Flight> arrivingFlights;
 
     public void addDepartingFlight(Flight flight) {
@@ -55,27 +51,5 @@ public class Airport {
     public void removeArrivalFlight(Flight flight) {
         arrivingFlights.remove(flight);
         flight.setDestinationAirport(null);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Airport a
-                && a.getName().equals(name)
-                && a.getCode().equals(code);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, code);
-    }
-
-    @Override
-    public String toString() {
-        return "Airport{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", city='" + city + '\'' +
-                ", code='" + code + '\'' +
-                '}';
     }
 }
