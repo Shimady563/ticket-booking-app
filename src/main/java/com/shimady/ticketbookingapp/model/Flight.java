@@ -16,7 +16,7 @@ import java.util.Set;
 @Table(name = "flight")
 public class Flight {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "departure_time")
