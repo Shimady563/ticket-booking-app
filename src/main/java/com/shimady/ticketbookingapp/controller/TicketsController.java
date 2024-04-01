@@ -8,12 +8,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/search")
 public class TicketsController {
 
@@ -29,7 +30,7 @@ public class TicketsController {
         List<Flight> flights = ticketsService.getFlights(
                 request.sourceAirportCode,
                 request.destinationAirportCode,
-                request.departureTime
+                request.departureDate
         );
 
         List<TicketsResponse> ticketsResponses = new ArrayList<>();
@@ -55,7 +56,7 @@ public class TicketsController {
     private record TicketsRequest(
             String sourceAirportCode,
             String destinationAirportCode,
-            LocalDate departureTime,
+            LocalDate departureDate,
             SeatType seatType
     ) {
     }
