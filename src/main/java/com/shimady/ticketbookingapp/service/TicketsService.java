@@ -50,7 +50,7 @@ public class TicketsService {
     }
 
     public LocalTime getEstimatedTime(LocalDateTime departureTime, LocalDateTime arrivalTime) {
-        Duration duration = Duration.between(arrivalTime, departureTime);
+        Duration duration = Duration.between(departureTime, arrivalTime);
         return LocalTime.of(
                 duration.toHoursPart(),
                 duration.toMinutesPart()
