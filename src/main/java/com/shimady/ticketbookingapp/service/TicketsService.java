@@ -6,6 +6,7 @@ import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class TicketsService {
         this.flightRepository = flightRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Flight> getFlights(
             String sourceAirportCode,
             String destinationAirportCode,
