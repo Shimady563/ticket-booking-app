@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface FlightRepository extends Repository<Flight, Long> {
 
-    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, attributePaths = "seats")
+    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, attributePaths = {"seats", "seats.booking", "sourceAirport", "destinationAirport"})
     List<Flight> findAllByDepartureTimeBetweenAndSourceAirportCodeIgnoreCaseAndDestinationAirportCodeIgnoreCase(
             LocalDateTime startOfDay,
             LocalDateTime endOfDay,
