@@ -20,7 +20,7 @@ public class Booking {
     private User user;
 
     @Setter
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "seat_id")
     private Seat seat;
 }

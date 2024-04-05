@@ -40,15 +40,17 @@ public class TicketsService {
                 );
     }
 
-    public Optional<Seat> getSeatByType(Flight flight, SeatType seatType) {
-        return flight
+    public Optional<Seat> getSeatByType(Flight flight, SeatType seatType, int personCount) {
+        List<Seat> seats = flight
                 .getSeats()
                 .stream()
-                .filter(
-                        s -> s.getType()
-                                .equals(seatType)
-                )
-                .findFirst();
+                .filter(s -> s.getType().equals(seatType)
+                        && s.getBooking() == null)
+                .toList();
+        if (!seats.isEmpty() && seats.size() >= personCount) {
+            return Optional.of(seats.get(0));
+        }
+        return Optional.empty();
     }
 
     public LocalTime getEstimatedTime(LocalDateTime departureTime, LocalDateTime arrivalTime) {

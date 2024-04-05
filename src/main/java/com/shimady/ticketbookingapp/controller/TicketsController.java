@@ -35,7 +35,7 @@ public class TicketsController {
 
         List<TicketsResponse> ticketsResponses = new ArrayList<>();
         for (Flight flight : flights) {
-            ticketsService.getSeatByType(flight, request.seatType()).ifPresent(
+            ticketsService.getSeatByType(flight, request.seatType(), request.personCount).ifPresent(
                     seat -> ticketsResponses
                             .add(new TicketsResponse(
                                     flight.getId(),
@@ -57,7 +57,8 @@ public class TicketsController {
             String sourceAirportCode,
             String destinationAirportCode,
             LocalDate departureDate,
-            SeatType seatType
+            SeatType seatType,
+            int personCount
     ) {
     }
 
