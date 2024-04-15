@@ -32,7 +32,7 @@ public class TicketsService {
             LocalDate departureDate
     ) {
         return flightRepository
-                .findAllByDepartureTimeBetweenAndSourceAirportCodeIgnoreCaseAndDestinationAirportCodeIgnoreCase(
+                .findAllByDepartureTimeBetweenAndSourceAirportCodeAndDestinationAirportCodeAllIgnoreCase(
                         departureDate.atStartOfDay(),
                         departureDate.plusDays(1).atStartOfDay(),
                         sourceAirportCode,
