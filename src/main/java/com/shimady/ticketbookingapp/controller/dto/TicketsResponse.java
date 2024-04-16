@@ -9,7 +9,8 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Getter
 public class TicketsResponse {
-    private final Long id;
+    //returning flight id for further tickets searching
+    private final Long flightId;
     private int overallPrice;
     private final LocalDateTime departureTime;
     private final LocalDateTime arrivalTime;

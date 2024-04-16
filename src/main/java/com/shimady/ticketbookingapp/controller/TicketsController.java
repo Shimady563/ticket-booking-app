@@ -1,18 +1,15 @@
 package com.shimady.ticketbookingapp.controller;
 
 import com.shimady.ticketbookingapp.model.Seat;
+import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.service.TicketsService;
 import com.shimady.ticketbookingapp.model.Flight;
-import com.shimady.ticketbookingapp.controller.dto.TicketsRequestOneWay;
-import com.shimady.ticketbookingapp.controller.dto.TicketsRequestTwoWay;
 import com.shimady.ticketbookingapp.controller.dto.TicketsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,23 +25,28 @@ public class TicketsController {
         this.ticketsService = ticketsService;
     }
 
-    @PostMapping("/one-way")
-    public List<TicketsResponse> getOneWaySeatsInfo(@RequestBody TicketsRequestOneWay request) {
+    @GetMapping("/one-way")
+    public List<TicketsResponse> getOneWayTicketsInfo(
+            @RequestParam String sourceAirportCode,
+            @RequestParam String destinationAirportCode,
+            @RequestParam LocalDate departureDate,
+            @RequestParam(required = false, defaultValue = "ECONOMY") SeatType seatType,
+            @RequestParam(required = false, defaultValue = "1") int personCount
+    ) {
         List<Flight> flights = ticketsService.getFlights(
-                request.getSourceAirportCode(),
-                request.getDestinationAirportCode(),
-                request.getDepartureDate()
+                sourceAirportCode,
+                destinationAirportCode,
+                departureDate
         );
 
-        System.out.println(flights);
-
+        //returning flights that have required seats
         List<TicketsResponse> ticketsResponses = new ArrayList<>();
         for (Flight flight : flights) {
-            ticketsService.getSeatByType(flight, request.getSeatType(), request.getPersonCount()).ifPresent(
+            ticketsService.getSeatByType(flight, seatType, personCount).ifPresent(
                     seat -> ticketsResponses
                             .add(new TicketsResponse(
                                     flight.getId(),
-                                    seat.getPrice() * request.getPersonCount(),
+                                    seat.getPrice() * personCount,
                                     flight.getDepartureTime(),
                                     flight.getArrivalTime(),
                                     flight.getSourceAirport().getCity(),
@@ -57,43 +59,60 @@ public class TicketsController {
         return ticketsResponses;
     }
 
-    @PostMapping("/two-way")
-    public List<Pair<TicketsResponse, TicketsResponse>> getTwoWaySeatsInfo(@RequestBody TicketsRequestTwoWay request) {
+    @GetMapping("/two-way")
+    public List<Pair<TicketsResponse, TicketsResponse>> getTwoWayTicketsInfo(
+            @RequestParam String sourceAirportCode,
+            @RequestParam String destinationAirportCode,
+            @RequestParam LocalDate departureDate,
+            @RequestParam LocalDate returnDepartureDate,
+            @RequestParam(required = false, defaultValue = "ECONOMY") SeatType seatType,
+            @RequestParam(required = false, defaultValue = "1") int personCount
+    ) {
         List<Flight> flights = ticketsService.getFlights(
-                request.getSourceAirportCode(),
-                request.getDestinationAirportCode(),
-                request.getDepartureDate()
+                sourceAirportCode,
+                destinationAirportCode,
+                departureDate
         );
         List<Flight> returnFlights = ticketsService.getFlights(
-                request.getDestinationAirportCode(),
-                request.getSourceAirportCode(),
-                request.getReturnDepartureDate()
+                destinationAirportCode,
+                sourceAirportCode,
+                returnDepartureDate
         );
 
+        //return all matching pairs of direct and return flights
         List<Pair<TicketsResponse, TicketsResponse>> twoWayResponses = new ArrayList<>();
         for (Flight flight : flights) {
+            Optional<Seat> seat = ticketsService.getSeatByType(flight, seatType, personCount);
+
+            //the problem here is that every return flight
+            //is processed inside the second loop several times
+            //but I can't think of better solution in this situation for now
             for (Flight returnFlight : returnFlights) {
-                Optional<Seat> seat = ticketsService.getSeatByType(flight, request.getSeatType(), request.getPersonCount());
-                Optional<Seat> returnSeat = ticketsService.getSeatByType(returnFlight, request.getSeatType(), request.getPersonCount());
-                if (seat.isPresent() && returnSeat.isPresent()) {
-                    twoWayResponses.add(Pair.of(
-                            new TicketsResponse(
-                                    flight.getId(),
-                                    seat.get().getPrice() * request.getPersonCount(),
-                                    flight.getDepartureTime(),
-                                    flight.getArrivalTime(),
-                                    flight.getSourceAirport().getCity(),
-                                    flight.getDestinationAirport().getCity(),
-                                    ticketsService.getEstimatedTime(flight.getDepartureTime(), flight.getArrivalTime())
-                            ), new TicketsResponse(
-                                    returnFlight.getId(),
-                                    returnSeat.get().getPrice() * request.getPersonCount(),
-                                    returnFlight.getDepartureTime(),
-                                    returnFlight.getArrivalTime(),
-                                    returnFlight.getSourceAirport().getCity(),
-                                    returnFlight.getDestinationAirport().getCity(),
-                                    ticketsService.getEstimatedTime(returnFlight.getDepartureTime(), returnFlight.getArrivalTime())
-                            )));
+                Optional<Seat> returnSeat = ticketsService.getSeatByType(returnFlight, seatType, personCount);
+
+                //test if both seats exist
+                //and there are at least two hours between the flights
+                if (seat.isPresent()
+                        && returnSeat.isPresent()
+                        && flight.getArrivalTime().plusHours(2).isBefore(returnFlight.getDepartureTime())) {
+
+                    twoWayResponses.add(Pair.of(new TicketsResponse(
+                            flight.getId(),
+                            seat.get().getPrice() * personCount,
+                            flight.getDepartureTime(),
+                            flight.getArrivalTime(),
+                            flight.getSourceAirport().getCity(),
+                            flight.getDestinationAirport().getCity(),
+                            ticketsService.getEstimatedTime(flight.getDepartureTime(), flight.getArrivalTime())
+                    ), new TicketsResponse(
+                            returnFlight.getId(),
+                            returnSeat.get().getPrice() * personCount,
+                            returnFlight.getDepartureTime(),
+                            returnFlight.getArrivalTime(),
+                            returnFlight.getSourceAirport().getCity(),
+                            returnFlight.getDestinationAirport().getCity(),
+                            ticketsService.getEstimatedTime(returnFlight.getDepartureTime(), returnFlight.getArrivalTime())
+                    )));
                 }
             }
         }
