@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "seat")
 public class Seat {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "number")
@@ -27,8 +27,6 @@ public class Seat {
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
-    @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "booking_id")
+    @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY)
     private Booking booking;
-
 }

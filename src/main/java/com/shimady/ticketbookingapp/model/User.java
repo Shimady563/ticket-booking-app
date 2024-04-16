@@ -14,11 +14,14 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "full_name")
-    private String fullName;
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "second_name")
+    private String lastName;
 
     @Column(name = "email")
     private String email;
@@ -28,14 +31,4 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Booking> bookings;
-
-    public void addBooking(Booking booking) {
-        bookings.add(booking);
-        booking.setUser(this);
-    }
-
-    public void removeBooking(Booking booking) {
-        bookings.remove(booking);
-        booking.setUser(null);
-    }
 }
