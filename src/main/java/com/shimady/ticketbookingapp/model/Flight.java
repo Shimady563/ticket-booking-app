@@ -26,12 +26,12 @@ public class Flight {
     private LocalDateTime arrivalTime;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "source_airport_id")
     private Airport sourceAirport;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destination_airport_id")
     private Airport destinationAirport;
 
