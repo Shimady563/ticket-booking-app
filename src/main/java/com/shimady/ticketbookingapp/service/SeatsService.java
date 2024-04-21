@@ -16,13 +16,12 @@ public class SeatsService {
     private final SeatsRepository seatsRepository;
 
     @Autowired
-    public SeatsService(SeatsRepository seatsRepository, FlightRepository flightRepository) {
+    public SeatsService(SeatsRepository seatsRepository) {
         this.seatsRepository = seatsRepository;
     }
 
     @Transactional(readOnly = true)
     public List<Seat> getSeatsByFlightIdAndType(Long flightId, SeatType seatType) {
-        //proper exceptions and handling for them will be added soon
         return seatsRepository.findAllByFlightIdAndType(flightId, seatType);
     }
 }
