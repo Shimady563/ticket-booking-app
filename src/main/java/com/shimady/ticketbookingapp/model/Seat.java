@@ -27,6 +27,7 @@ public class Seat {
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
-    @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booking_id")
     private Booking booking;
 }
