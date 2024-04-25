@@ -3,6 +3,7 @@ package com.shimady.ticketbookingapp.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
@@ -27,6 +28,7 @@ public class Seat {
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     private Booking booking;

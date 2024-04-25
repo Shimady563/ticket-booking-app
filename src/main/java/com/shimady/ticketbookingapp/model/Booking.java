@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -26,16 +25,19 @@ public class Booking {
     @Column(name = "creation_time")
     private LocalDateTime creationTime = LocalDateTime.now();
 
-    @Setter
-    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
-    private List<Seat> seats;
-
-    @Setter
     @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Passenger> passengers = new ArrayList<>();
+    private Set<Seat> seats;
 
-    public void addAllPassengers(List<Passenger> passengers) {
-        passengers.forEach((passenger) -> passenger.setBooking(this));
-        this.passengers.addAll(passengers);
+    @ManyToMany(mappedBy = "bookings", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<Passenger> passengers;
+
+    public void setPassengers(Set<Passenger> passengers) {
+        passengers.forEach((passenger) -> passenger.addBooking(this));
+        this.passengers = passengers;
+    }
+
+    public void setSeats(Set<Seat> seats) {
+        seats.forEach(seat -> seat.setBooking(this));
+        this.seats = seats;
     }
 }
