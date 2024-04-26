@@ -2,7 +2,7 @@ package com.shimady.ticketbookingapp.service;
 
 import com.shimady.ticketbookingapp.controller.dto.BookingRequest;
 import com.shimady.ticketbookingapp.controller.dto.BookingResponse;
-import com.shimady.ticketbookingapp.controller.dto.PassengerResponse;
+import com.shimady.ticketbookingapp.controller.dto.PassengersResponse;
 import com.shimady.ticketbookingapp.controller.dto.SeatsResponse;
 import com.shimady.ticketbookingapp.model.Booking;
 import com.shimady.ticketbookingapp.model.Seat;
@@ -40,5 +40,33 @@ public class BookingService {
         booking.setPassengers(request.passengers());
         user.addBooking(booking);
         userService.updateUser(user);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookingResponse> getBookingsByUser() {
+        Long id = 1L;
+        User user = userService.getUserById(id);
+        return user
+                .getBookings()
+                .stream()
+                .map((booking -> new BookingResponse(
+                        booking.getCreationTime(),
+                        booking.getSeats().stream().map((seat -> new SeatsResponse(
+                                seat.getId(),
+                                seat.getNumber(),
+                                seat.getPrice(),
+                                seat.getType(),
+                                seat.getBooking()
+                        ))).collect(Collectors.toSet()),
+                        booking.getPassengers().stream().map(passenger -> new PassengersResponse(
+                                passenger.getFirstName(),
+                                passenger.getLastName(),
+                                passenger.getBirthDate(),
+                                passenger.getCitizenship(),
+                                passenger.getPassportNumber(),
+                                passenger.getPassportExpiryDate()
+                        )).collect(Collectors.toSet())
+                )))
+                .toList();
     }
 }

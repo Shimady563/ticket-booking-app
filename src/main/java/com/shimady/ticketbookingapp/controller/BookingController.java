@@ -31,4 +31,9 @@ public class BookingController {
         bookingService.handleCreationRequest(request);
         return new ResponseEntity<>("Booking successfully created", HttpStatus.CREATED);
     }
+
+    @GetMapping("")
+    public List<BookingResponse> getBookings() {
+        return bookingService.getBookingsByUser();
+    }
 }
