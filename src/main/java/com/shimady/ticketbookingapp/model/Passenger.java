@@ -13,7 +13,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "passenger")
+@Table(
+        name = "passenger",
+        uniqueConstraints = @UniqueConstraint(
+                name = "passenger_unique_fn_ln_pn",
+                columnNames = {"first_name, last_name, passport_number"}
+        )
+)
 public class Passenger {
 
     @Id
@@ -37,18 +43,6 @@ public class Passenger {
 
     @Column(name = "passport_expiry_date")
     private LocalDate passportExpiryDate;
-
-    @Setter
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "passenger_id"),
-            inverseJoinColumns = @JoinColumn(name = "booking_id")
-    )
-    private Set<Booking> bookings = new HashSet<>();
-
-    public void addBooking(Booking booking) {
-        bookings.add(booking);
-    }
 
     @Override
     public boolean equals(Object o) {

@@ -32,4 +32,8 @@ public class Seat {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     private Booking booking;
+
+    public boolean isBooked() {
+        return booking != null;
+    }
 }

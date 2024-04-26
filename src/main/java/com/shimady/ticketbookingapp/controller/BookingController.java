@@ -2,7 +2,6 @@ package com.shimady.ticketbookingapp.controller;
 
 import com.shimady.ticketbookingapp.controller.dto.BookingRequest;
 import com.shimady.ticketbookingapp.controller.dto.BookingResponse;
-import com.shimady.ticketbookingapp.model.Booking;
 import com.shimady.ticketbookingapp.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,7 @@ public class BookingController {
     public ResponseEntity<String> bookSeats(@RequestBody BookingRequest request) {
         //exceptions and handling for them will be added in the future
         if (request.passengers().size() != request.seatsIds().size()) {
-            throw new RuntimeException();
+            throw new RuntimeException("Wrong number of passengers or seats");
         }
         bookingService.handleCreationRequest(request);
         return new ResponseEntity<>("Booking successfully created", HttpStatus.CREATED);
