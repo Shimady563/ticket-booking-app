@@ -4,6 +4,8 @@ import com.shimady.ticketbookingapp.controller.dto.BookingRequest;
 import com.shimady.ticketbookingapp.controller.dto.BookingResponse;
 import com.shimady.ticketbookingapp.controller.dto.PassengersResponse;
 import com.shimady.ticketbookingapp.controller.dto.SeatsResponse;
+import com.shimady.ticketbookingapp.exception.BadRequestException;
+import com.shimady.ticketbookingapp.exception.BookingException;
 import com.shimady.ticketbookingapp.model.Booking;
 import com.shimady.ticketbookingapp.model.Passenger;
 import com.shimady.ticketbookingapp.model.Seat;
@@ -49,12 +51,12 @@ public class BookingService {
         List<Seat> seats = seatsService.getAllSeatsByIds(request.seatsIds());
 
         if (seats.size() != request.seatsIds().size()) {
-            throw new RuntimeException("Wrong seat id's in request");
+            throw new BadRequestException("Non-existing seat ids in request");
         }
 
         for (Seat seat : seats) {
             if (seat.isBooked()) {
-                throw new RuntimeException("One of the seats is already booked");
+                throw new BookingException("Seat " + seat.getId() + " is already booked");
             }
         }
 
@@ -70,7 +72,7 @@ public class BookingService {
 
         //saving and updating entities by hand
         //because cascade was always updating seats before booking
-        //so the exception about non existing booking was thrown every time
+        //so the exception about non-existing booking was thrown every time
         Booking booking = new Booking();
         booking.setSeats(new HashSet<>(seats));
         booking.setPassengers(existingPassengers);
