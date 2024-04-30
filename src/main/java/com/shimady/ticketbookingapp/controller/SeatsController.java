@@ -32,7 +32,7 @@ public class SeatsController {
                         s.getNumber(),
                         s.getPrice(),
                         s.getType(),
-                        s.getBooking())
+                        s.getBooking() != null)
                 )
                 .toList();
     }

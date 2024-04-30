@@ -9,5 +9,5 @@ public record PassengersResponse(
         String citizenship,
         Long passportName,
         LocalDate passportExpiryDate
-){
+) {
 }

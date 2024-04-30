@@ -95,7 +95,7 @@ public class BookingService {
                                 seat.getNumber(),
                                 seat.getPrice(),
                                 seat.getType(),
-                                seat.getBooking()
+                                true
                         ))).collect(Collectors.toSet()),
                         booking.getPassengers().stream().map(passenger -> new PassengersResponse(
                                 passenger.getFirstName(),
