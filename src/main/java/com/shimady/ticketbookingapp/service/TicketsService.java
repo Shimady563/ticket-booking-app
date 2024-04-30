@@ -90,24 +90,22 @@ public class TicketsService {
         //return all matching pairs of direct and return flights
         List<Pair<TicketsResponse, TicketsResponse>> twoWayResponses = new ArrayList<>();
         for (Flight flight : flights) {
-            Optional<Seat> seat = getSeatByType(flight, seatType, personCount);
+            Optional<Seat> seatOptional = getSeatByType(flight, seatType, personCount);
 
-            //the problem here is that every return flight
-            //is processed inside the second loop several times
-            //but I can't think of better solution in this situation for now
-            for (Flight returnFlight : returnFlights) {
-                Optional<Seat> returnSeat = getSeatByType(returnFlight, seatType, personCount);
+            if (seatOptional.isPresent()) {
+                Seat seat = seatOptional.get();
 
-                //test if both seats exist
-                //and there are at least two hours between the flights
-                if (seat.isPresent()
-                        && returnSeat.isPresent()
-                        && flight.getArrivalTime().plusHours(2).isBefore(returnFlight.getDepartureTime())) {
+                for (Flight returnFlight : returnFlights) {
+                    Optional<Seat> returnSeat = getSeatByType(returnFlight, seatType, personCount);
 
-                    twoWayResponses.add(Pair.of(
-                            mapToResponse(flight, seat.get(), personCount),
-                            mapToResponse(returnFlight, returnSeat.get(), personCount))
-                    );
+                    //test if there are at least two hours between the flights
+                    if (returnSeat.isPresent()
+                            && flight.getArrivalTime().plusHours(2).isBefore(returnFlight.getDepartureTime())) {
+                        twoWayResponses.add(Pair.of(
+                                mapToResponse(flight, seat, personCount),
+                                mapToResponse(returnFlight, returnSeat.get(), personCount))
+                        );
+                    }
                 }
             }
         }
@@ -119,8 +117,7 @@ public class TicketsService {
         List<Seat> seats = flight
                 .getSeats()
                 .stream()
-                .filter(s -> s.getType().equals(seatType)
-                        && s.getBooking() == null)
+                .filter(seat -> seat.getType().equals(seatType) && seat.isBooked())
                 .toList();
         if (!seats.isEmpty() && seats.size() >= personCount) {
             return Optional.of(seats.get(0));

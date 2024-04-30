@@ -3,7 +3,6 @@ package com.shimady.ticketbookingapp.service;
 import com.shimady.ticketbookingapp.controller.dto.BookingRequest;
 import com.shimady.ticketbookingapp.controller.dto.BookingResponse;
 import com.shimady.ticketbookingapp.controller.dto.PassengersResponse;
-import com.shimady.ticketbookingapp.controller.dto.SeatsResponse;
 import com.shimady.ticketbookingapp.exception.BadRequestException;
 import com.shimady.ticketbookingapp.exception.BookingException;
 import com.shimady.ticketbookingapp.model.Booking;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
