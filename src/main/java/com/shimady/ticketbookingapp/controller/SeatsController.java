@@ -24,16 +24,6 @@ public class SeatsController {
 
     @GetMapping("")
     public List<SeatsResponse> getSeats(@RequestParam Long flightId, @RequestParam SeatType seatType) {
-        return seatsService
-                .getSeatsByFlightIdAndType(flightId, seatType)
-                .stream()
-                .map((s) -> new SeatsResponse(
-                        s.getId(),
-                        s.getNumber(),
-                        s.getPrice(),
-                        s.getType(),
-                        s.getBooking() != null)
-                )
-                .toList();
+        return seatsService.getSeatsByFlightIdAndType(flightId, seatType);
     }
 }

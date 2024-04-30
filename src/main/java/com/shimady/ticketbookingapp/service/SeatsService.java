@@ -1,5 +1,6 @@
 package com.shimady.ticketbookingapp.service;
 
+import com.shimady.ticketbookingapp.controller.dto.SeatsResponse;
 import com.shimady.ticketbookingapp.model.Seat;
 import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.repository.SeatsRepository;
@@ -20,12 +21,32 @@ public class SeatsService {
     }
 
     @Transactional(readOnly = true)
-    public List<Seat> getSeatsByFlightIdAndType(Long flightId, SeatType seatType) {
-        return seatsRepository.findAllByFlightIdAndType(flightId, seatType);
+    public List<SeatsResponse> getSeatsByFlightIdAndType(Long flightId, SeatType seatType) {
+        return seatsRepository
+                .findAllByFlightIdAndType(flightId, seatType)
+                .stream()
+                .map((seat -> new SeatsResponse(
+                        seat.getId(),
+                        seat.getNumber(),
+                        seat.getPrice(),
+                        seat.getType(),
+                        seat.isBooked()
+                )))
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<Seat> getAllSeatsByIds(List<Long> seatIds) {
         return seatsRepository.findAllById(seatIds);
+    }
+
+    protected SeatsResponse mapToResponse(Seat seat) {
+        return new SeatsResponse(
+                seat.getId(),
+                seat.getNumber(),
+                seat.getPrice(),
+                seat.getType(),
+                seat.isBooked()
+        );
     }
 }

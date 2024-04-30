@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,15 +61,16 @@ public class BookingService {
             }
         }
 
-
         //updating passengers if they already exist to not violate unique constraint
         Set<Passenger> existingPassengers = request.passengers()
                 .stream()
-                .map((passenger -> passengerRepository.findByFirstNameAndLastNameAndPassportNumber(
-                        passenger.getFirstName(),
-                        passenger.getLastName(),
-                        passenger.getPassportNumber()
-                ).orElse(passenger))).collect(Collectors.toSet());
+                .map((passenger -> passengerRepository
+                        .findByFirstNameAndLastNameAndPassportNumber(
+                                passenger.getFirstName(),
+                                passenger.getLastName(),
+                                passenger.getPassportNumber()
+                        ).orElse(passenger)))
+                .collect(Collectors.toSet());
 
         //saving and updating entities by hand
         //because cascade was always updating seats before booking
@@ -88,24 +90,32 @@ public class BookingService {
         return user
                 .getBookings()
                 .stream()
-                .map((booking -> new BookingResponse(
-                        booking.getCreationTime(),
-                        booking.getSeats().stream().map((seat -> new SeatsResponse(
-                                seat.getId(),
-                                seat.getNumber(),
-                                seat.getPrice(),
-                                seat.getType(),
-                                true
-                        ))).collect(Collectors.toSet()),
-                        booking.getPassengers().stream().map(passenger -> new PassengersResponse(
-                                passenger.getFirstName(),
-                                passenger.getLastName(),
-                                passenger.getBirthDate(),
-                                passenger.getCitizenship(),
-                                passenger.getPassportNumber(),
-                                passenger.getPassportExpiryDate()
-                        )).collect(Collectors.toSet())
-                )))
+                .map(this::mapToResponse)
                 .toList();
+    }
+
+    private BookingResponse mapToResponse(Booking booking) {
+        return new BookingResponse(
+                booking.getCreationTime(),
+                booking.getSeats()
+                        .stream()
+                        .map(seatsService::mapToResponse)
+                        .collect(Collectors.toSet()),
+                booking.getPassengers()
+                        .stream()
+                        .map(this::mapPassengersToResponse)
+                        .collect(Collectors.toSet())
+        );
+    }
+
+    private PassengersResponse mapPassengersToResponse(Passenger passenger) {
+        return new PassengersResponse(
+                passenger.getFirstName(),
+                passenger.getLastName(),
+                passenger.getBirthDate(),
+                passenger.getCitizenship(),
+                passenger.getPassportNumber(),
+                passenger.getPassportExpiryDate()
+        );
     }
 }

@@ -59,17 +59,9 @@ public class TicketsService {
 
         List<TicketsResponse> ticketsResponses = new ArrayList<>();
         for (Flight flight : flights) {
-            getSeatByType(flight, seatType, personCount).ifPresent(
-                    seat -> ticketsResponses
-                            .add(new TicketsResponse(
-                                    flight.getId(),
-                                    seat.getPrice() * personCount,
-                                    flight.getDepartureTime(),
-                                    flight.getArrivalTime(),
-                                    flight.getSourceAirport().getCity(),
-                                    flight.getDestinationAirport().getCity(),
-                                    getEstimatedTime(flight.getDepartureTime(), flight.getArrivalTime())
-                            )));
+            getSeatByType(flight, seatType, personCount)
+                    .ifPresent(seat -> ticketsResponses
+                            .add(mapToResponse(flight, seat, personCount)));
         }
 
         return ticketsResponses;
@@ -112,23 +104,10 @@ public class TicketsService {
                         && returnSeat.isPresent()
                         && flight.getArrivalTime().plusHours(2).isBefore(returnFlight.getDepartureTime())) {
 
-                    twoWayResponses.add(Pair.of(new TicketsResponse(
-                            flight.getId(),
-                            seat.get().getPrice() * personCount,
-                            flight.getDepartureTime(),
-                            flight.getArrivalTime(),
-                            flight.getSourceAirport().getCity(),
-                            flight.getDestinationAirport().getCity(),
-                            getEstimatedTime(flight.getDepartureTime(), flight.getArrivalTime())
-                    ), new TicketsResponse(
-                            returnFlight.getId(),
-                            returnSeat.get().getPrice() * personCount,
-                            returnFlight.getDepartureTime(),
-                            returnFlight.getArrivalTime(),
-                            returnFlight.getSourceAirport().getCity(),
-                            returnFlight.getDestinationAirport().getCity(),
-                            getEstimatedTime(returnFlight.getDepartureTime(), returnFlight.getArrivalTime())
-                    )));
+                    twoWayResponses.add(Pair.of(
+                            mapToResponse(flight, seat.get(), personCount),
+                            mapToResponse(returnFlight, returnSeat.get(), personCount))
+                    );
                 }
             }
         }
@@ -154,6 +133,18 @@ public class TicketsService {
         return LocalTime.of(
                 duration.toHoursPart(),
                 duration.toMinutesPart()
+        );
+    }
+
+    private TicketsResponse mapToResponse(Flight flight, Seat seat, int personCount) {
+        return new TicketsResponse(
+                flight.getId(),
+                seat.getPrice() * personCount,
+                flight.getDepartureTime(),
+                flight.getArrivalTime(),
+                flight.getSourceAirport().getCity(),
+                flight.getDestinationAirport().getCity(),
+                getEstimatedTime(flight.getDepartureTime(), flight.getArrivalTime())
         );
     }
 }

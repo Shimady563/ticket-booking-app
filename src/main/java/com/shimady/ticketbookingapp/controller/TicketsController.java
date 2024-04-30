@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/search")
+@RequestMapping("/tickets")
 public class TicketsController {
 
     private final TicketsService ticketsService;
