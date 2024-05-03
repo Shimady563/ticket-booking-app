@@ -11,6 +11,7 @@ import com.shimady.ticketbookingapp.model.Seat;
 import com.shimady.ticketbookingapp.model.User;
 import com.shimady.ticketbookingapp.repository.BookingRepository;
 import com.shimady.ticketbookingapp.repository.PassengerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class BookingService {
 
     private final BookingRepository bookingRepository;
@@ -79,12 +81,14 @@ public class BookingService {
         user.addBooking(booking);
         userService.updateUser(user);
         bookingRepository.save(booking);
+        log.info("Created booking {} for user {} with login {}", booking.getId(), user.getId(), user.getLogin());
     }
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getBookingsByUser() {
         Long id = 1L;
         User user = userService.getUserById(id);
+        log.info("Getting bookings for user {} with login {}", user.getId(), user.getLogin());
         return user
                 .getBookings()
                 .stream()

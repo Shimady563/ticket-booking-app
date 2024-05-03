@@ -5,6 +5,7 @@ import com.shimady.ticketbookingapp.model.Flight;
 import com.shimady.ticketbookingapp.model.Seat;
 import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.repository.FlightRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class TicketsService {
 
     private final FlightRepository flightRepository;
@@ -34,6 +36,9 @@ public class TicketsService {
             String destinationAirportCode,
             LocalDate departureDate
     ) {
+        log.info("Getting flights from airport {}" +
+                ", to airport {}, on {}",
+                sourceAirportCode, destinationAirportCode, departureDate);
         return flightRepository
                 .findAllByDepartureTimeBetweenAndSourceAirportCodeAndDestinationAirportCode(
                         departureDate.atStartOfDay(),
@@ -64,6 +69,10 @@ public class TicketsService {
                             .add(mapToResponse(flight, seat, personCount)));
         }
 
+        log.info("Processed request for one-way tickets with type {}" +
+                " from airport {}" +
+                " to airport {}, on {}",
+                seatType, sourceAirportCode, destinationAirportCode, departureDate);
         return ticketsResponses;
     }
 
@@ -110,10 +119,17 @@ public class TicketsService {
             }
         }
 
+        log.info("Processed request for two-way tickets with type {}" +
+                        " from airport {}" +
+                        " to airport {}, on {}",
+                seatType, sourceAirportCode, destinationAirportCode, departureDate);
         return twoWayResponses;
     }
 
     public Optional<Seat> getSeatByType(Flight flight, SeatType seatType, int personCount) {
+        log.info("Getting seat for flight {}" +
+                " if it has more than {}" +
+                " unbooked seats with type {}", flight.getId(), personCount, seatType);
         List<Seat> seats = flight
                 .getSeats()
                 .stream()
