@@ -133,7 +133,7 @@ public class TicketsService {
         List<Seat> seats = flight
                 .getSeats()
                 .stream()
-                .filter(seat -> seat.getType().equals(seatType) && seat.isBooked())
+                .filter(seat -> seat.getType().equals(seatType) && !seat.isBooked())
                 .toList();
         if (!seats.isEmpty() && seats.size() >= personCount) {
             return Optional.of(seats.get(0));
