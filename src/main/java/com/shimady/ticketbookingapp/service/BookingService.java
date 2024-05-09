@@ -80,6 +80,7 @@ public class BookingService {
         booking.setPassengers(existingPassengers);
         user.addBooking(booking);
         userService.updateUser(user);
+        passengerRepository.saveAll(existingPassengers);
         bookingRepository.save(booking);
         log.info("Created booking {} for user {} with login {}", booking.getId(), user.getId(), user.getLogin());
     }

@@ -7,7 +7,7 @@ import org.springframework.data.repository.ListCrudRepository;
 
 import java.util.List;
 
-public interface SeatsRepository extends ListCrudRepository<Seat, Long> {
+public interface SeatRepository extends ListCrudRepository<Seat, Long> {
 
     @EntityGraph(type = EntityGraph.EntityGraphType.LOAD, attributePaths = {"booking"})
     List<Seat> findAllByFlightIdAndType(Long flightId, SeatType seatType);
