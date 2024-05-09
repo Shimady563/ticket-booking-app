@@ -1,13 +1,12 @@
 package com.shimady.ticketbookingapp.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -36,5 +35,24 @@ public class Flight {
     private Airport destinationAirport;
 
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
-    private Set<Seat> seats;
+    private Set<Seat> seats = new HashSet<>();
+
+    public void addSeat(Seat seat) {
+        seat.setFlight(this);
+        seats.add(seat);
+    }
+
+    public Flight(
+            LocalDateTime departureTime,
+            LocalDateTime arrivalTime,
+            Airport sourceAirport,
+            Airport destinationAirport,
+            Set<Seat> seats
+    ) {
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+        this.sourceAirport = sourceAirport;
+        this.destinationAirport = destinationAirport;
+        this.seats = seats;
+    }
 }

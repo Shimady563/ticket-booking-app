@@ -7,6 +7,7 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "seat")
 public class Seat {
@@ -28,7 +29,6 @@ public class Seat {
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     private Booking booking;
