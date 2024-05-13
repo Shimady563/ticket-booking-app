@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @Slf4j
 public class SeatService {
@@ -28,13 +30,7 @@ public class SeatService {
         return seatRepository
                 .findAllByFlightIdAndType(flightId, seatType)
                 .stream()
-                .map((seat -> new SeatResponse(
-                        seat.getId(),
-                        seat.getNumber(),
-                        seat.getPrice(),
-                        seat.getType(),
-                        seat.isBooked()
-                )))
+                .map(this::mapToResponse)
                 .toList();
     }
 

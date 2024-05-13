@@ -11,6 +11,7 @@ import java.util.Set;
 
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "flight")
 public class Flight {
@@ -24,12 +25,10 @@ public class Flight {
     @Column(name = "arrival_time")
     private LocalDateTime arrivalTime;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "source_airport_id")
     private Airport sourceAirport;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destination_airport_id")
     private Airport destinationAirport;
