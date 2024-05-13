@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
@@ -33,8 +34,14 @@ public class TicketServiceTest {
         String sourceAirportCode = "QWE";
         String destinationAirportCode = "RTY";
         LocalDate departureDate = LocalDate.now();
+        Airport sourceAirport = new Airport("airport1", "city1", sourceAirportCode);
+        Airport destinationAirport = new Airport("airport2", "city2", destinationAirportCode);
 
-        List<Flight> flights = List.of(new Flight(), new Flight());
+        Flight flight1 = new Flight();
+        flight1.setSourceAirport(sourceAirport);
+        flight1.setDestinationAirport(destinationAirport);
+
+        List<Flight> flights = List.of(flight1);
 
         given(flightRepository
                 .findAllByDepartureTimeBetweenAndSourceAirportCodeAndDestinationAirportCode(
@@ -102,13 +109,19 @@ public class TicketServiceTest {
                 personCount
         );
 
-        assertThat(responses.size()).isEqualTo(1);
-
-        TicketResponse response = responses.get(0);
-
-        assertThat(response.overallPrice()).isEqualTo(seatPrice * personCount);
-        assertThat(response.departureTime()).isEqualTo(departureTime);
-        assertThat(response.arrivalTime()).isEqualTo(arrivalTime);
+        assertThat(responses)
+                .hasSize(1)
+                .extracting(
+                        TicketResponse::overallPrice,
+                        TicketResponse::departureTime,
+                        TicketResponse::arrivalTime)
+                .containsExactly(
+                        tuple(
+                                seatPrice * personCount,
+                                departureTime,
+                                arrivalTime
+                        )
+                );
     }
 
     @Test
@@ -184,16 +197,24 @@ public class TicketServiceTest {
                 personCount
         );
 
-        assertThat(responses.size()).isEqualTo(1);
-
-        TicketResponse response1 = responses.get(0).getFirst();
-        TicketResponse response2 = responses.get(0).getSecond();
-
-        assertThat(response1.overallPrice()).isEqualTo(seatPrice * personCount);
-        assertThat(response1.departureTime()).isEqualTo(departureTime1);
-        assertThat(response1.arrivalTime()).isEqualTo(arrivalTime1);
-        assertThat(response2.overallPrice()).isEqualTo(seatPrice * personCount);
-        assertThat(response2.departureTime()).isEqualTo(departureTime2);
-        assertThat(response2.arrivalTime()).isEqualTo(arrivalTime2);
+        assertThat(responses).hasSize(1);
+        assertThat(List.of(responses.get(0).getFirst(), responses.get(0).getSecond()))
+                .extracting(
+                        TicketResponse::overallPrice,
+                        TicketResponse::departureTime,
+                        TicketResponse::arrivalTime
+                )
+                .containsExactly(
+                        tuple(
+                                seatPrice * personCount,
+                                departureTime1,
+                                arrivalTime1
+                        ),
+                        tuple(
+                                seatPrice * personCount,
+                                departureTime2,
+                                arrivalTime2
+                        )
+                );
     }
 }
