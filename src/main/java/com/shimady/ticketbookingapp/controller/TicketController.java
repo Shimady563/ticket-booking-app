@@ -1,8 +1,8 @@
 package com.shimady.ticketbookingapp.controller;
 
-import com.shimady.ticketbookingapp.controller.dto.TicketsResponse;
+import com.shimady.ticketbookingapp.controller.dto.TicketResponse;
 import com.shimady.ticketbookingapp.model.SeatType;
-import com.shimady.ticketbookingapp.service.TicketsService;
+import com.shimady.ticketbookingapp.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,24 +15,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/tickets")
-public class TicketsController {
+public class TicketController {
 
-    private final TicketsService ticketsService;
+    private final TicketService ticketService;
 
     @Autowired
-    public TicketsController(TicketsService ticketsService) {
-        this.ticketsService = ticketsService;
+    public TicketController(TicketService ticketService) {
+        this.ticketService = ticketService;
     }
 
     @GetMapping("/one-way")
-    public List<TicketsResponse> getOneWayTicketsInfo(
+    public List<TicketResponse> getOneWayTicketsInfo(
             @RequestParam String sourceAirportCode,
             @RequestParam String destinationAirportCode,
             @RequestParam LocalDate departureDate,
             @RequestParam(required = false, defaultValue = "ECONOMY") SeatType seatType,
             @RequestParam(required = false, defaultValue = "1") int personCount
     ) {
-        return ticketsService.handleOneWayRequest(
+        return ticketService.handleOneWayRequest(
                 sourceAirportCode,
                 destinationAirportCode,
                 departureDate,
@@ -42,7 +42,7 @@ public class TicketsController {
     }
 
     @GetMapping("/two-way")
-    public List<Pair<TicketsResponse, TicketsResponse>> getTwoWayTicketsInfo(
+    public List<Pair<TicketResponse, TicketResponse>> getTwoWayTicketsInfo(
             @RequestParam String sourceAirportCode,
             @RequestParam String destinationAirportCode,
             @RequestParam LocalDate departureDate,
@@ -50,7 +50,7 @@ public class TicketsController {
             @RequestParam(required = false, defaultValue = "ECONOMY") SeatType seatType,
             @RequestParam(required = false, defaultValue = "1") int personCount
     ) {
-        return ticketsService.handleTwoWayRequest(
+        return ticketService.handleTwoWayRequest(
                 sourceAirportCode,
                 destinationAirportCode,
                 departureDate,

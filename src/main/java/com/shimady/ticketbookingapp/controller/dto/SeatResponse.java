@@ -2,7 +2,7 @@ package com.shimady.ticketbookingapp.controller.dto;
 
 import com.shimady.ticketbookingapp.model.SeatType;
 
-public record SeatsResponse(
+public record SeatResponse(
         Long id,
         String number,
         int price,

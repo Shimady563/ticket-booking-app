@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 //flightId field is for further tickets searching
-public record TicketsResponse(
+public record TicketResponse(
         Long flightId,
         int overallPrice,
         LocalDateTime departureTime,

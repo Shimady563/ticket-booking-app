@@ -27,17 +27,17 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserService userService;
-    private final SeatsService seatsService;
+    private final SeatService seatService;
     private final PassengerRepository passengerRepository;
 
     @Autowired
     public BookingService(
-            SeatsService seatsService,
+            SeatService seatService,
             UserService userService,
             PassengerRepository passengerRepository,
             BookingRepository bookingRepository
     ) {
-        this.seatsService = seatsService;
+        this.seatService = seatService;
         this.userService = userService;
         this.passengerRepository = passengerRepository;
         this.bookingRepository = bookingRepository;
@@ -49,7 +49,7 @@ public class BookingService {
         // in the future user will be retrieved trough userDetails service impl
         Long id = 1L;
         User user = userService.getUserById(id);
-        List<Seat> seats = seatsService.getAllSeatsByIds(request.seatsIds());
+        List<Seat> seats = seatService.getAllSeatsByIds(request.seatsIds());
 
         if (seats.size() != request.seatsIds().size()) {
             throw new BadRequestException("Non-existing seat ids in request");
@@ -102,7 +102,7 @@ public class BookingService {
                 booking.getCreationTime(),
                 booking.getSeats()
                         .stream()
-                        .map(seatsService::mapToResponse)
+                        .map(seatService::mapToResponse)
                         .collect(Collectors.toSet()),
                 booking.getPassengers()
                         .stream()

@@ -1,6 +1,6 @@
 package com.shimady.ticketbookingapp.service;
 
-import com.shimady.ticketbookingapp.controller.dto.TicketsResponse;
+import com.shimady.ticketbookingapp.controller.dto.TicketResponse;
 import com.shimady.ticketbookingapp.model.*;
 import com.shimady.ticketbookingapp.repository.FlightRepository;
 import org.junit.jupiter.api.Test;
@@ -20,13 +20,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class TicketsServiceTest {
+public class TicketServiceTest {
 
     @Mock
     private FlightRepository flightRepository;
 
     @InjectMocks
-    private TicketsService ticketsService;
+    private TicketService ticketService;
 
     @Test
     public void testGetFlightsByAirports() {
@@ -45,7 +45,7 @@ public class TicketsServiceTest {
                 ))
                 .willReturn(flights);
 
-        List<Flight> responses = ticketsService.getFlightsByAirports(
+        List<Flight> responses = ticketService.getFlightsByAirports(
                 sourceAirportCode,
                 destinationAirportCode,
                 departureDate
@@ -94,7 +94,7 @@ public class TicketsServiceTest {
                 ))
                 .willReturn(flights);
 
-        List<TicketsResponse> responses = ticketsService.handleOneWayRequest(
+        List<TicketResponse> responses = ticketService.handleOneWayRequest(
                 sourceAirportCode,
                 destinationAirportCode,
                 departureDate,
@@ -104,7 +104,7 @@ public class TicketsServiceTest {
 
         assertThat(responses.size()).isEqualTo(1);
 
-        TicketsResponse response = responses.get(0);
+        TicketResponse response = responses.get(0);
 
         assertThat(response.overallPrice()).isEqualTo(seatPrice * personCount);
         assertThat(response.departureTime()).isEqualTo(departureTime);
@@ -175,7 +175,7 @@ public class TicketsServiceTest {
                 ))
                 .willReturn(returnFlights);
 
-        List<Pair<TicketsResponse, TicketsResponse>> responses = ticketsService.handleTwoWayRequest(
+        List<Pair<TicketResponse, TicketResponse>> responses = ticketService.handleTwoWayRequest(
                 sourceAirportCode,
                 destinationAirportCode,
                 departureDate,
@@ -186,8 +186,8 @@ public class TicketsServiceTest {
 
         assertThat(responses.size()).isEqualTo(1);
 
-        TicketsResponse response1 = responses.get(0).getFirst();
-        TicketsResponse response2 = responses.get(0).getSecond();
+        TicketResponse response1 = responses.get(0).getFirst();
+        TicketResponse response2 = responses.get(0).getSecond();
 
         assertThat(response1.overallPrice()).isEqualTo(seatPrice * personCount);
         assertThat(response1.departureTime()).isEqualTo(departureTime1);

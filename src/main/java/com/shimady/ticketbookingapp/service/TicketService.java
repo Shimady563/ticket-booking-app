@@ -1,6 +1,6 @@
 package com.shimady.ticketbookingapp.service;
 
-import com.shimady.ticketbookingapp.controller.dto.TicketsResponse;
+import com.shimady.ticketbookingapp.controller.dto.TicketResponse;
 import com.shimady.ticketbookingapp.model.Flight;
 import com.shimady.ticketbookingapp.model.Seat;
 import com.shimady.ticketbookingapp.model.SeatType;
@@ -21,12 +21,12 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class TicketsService {
+public class TicketService {
 
     private final FlightRepository flightRepository;
 
     @Autowired
-    public TicketsService(FlightRepository flightRepository) {
+    public TicketService(FlightRepository flightRepository) {
         this.flightRepository = flightRepository;
     }
 
@@ -49,7 +49,7 @@ public class TicketsService {
     }
 
     @Transactional(readOnly = true)
-    public List<TicketsResponse> handleOneWayRequest(
+    public List<TicketResponse> handleOneWayRequest(
             String sourceAirportCode,
             String destinationAirportCode,
             LocalDate departureDate,
@@ -62,10 +62,10 @@ public class TicketsService {
                 departureDate
         );
 
-        List<TicketsResponse> ticketsResponses = new ArrayList<>();
+        List<TicketResponse> ticketRespons = new ArrayList<>();
         for (Flight flight : flights) {
             getSeatByType(flight, seatType, personCount)
-                    .ifPresent(seat -> ticketsResponses
+                    .ifPresent(seat -> ticketRespons
                             .add(mapToResponse(flight, seat, personCount)));
         }
 
@@ -73,11 +73,11 @@ public class TicketsService {
                 " from airport {}" +
                 " to airport {}, on {}",
                 seatType, sourceAirportCode, destinationAirportCode, departureDate);
-        return ticketsResponses;
+        return ticketRespons;
     }
 
     @Transactional(readOnly = true)
-    public List<Pair<TicketsResponse, TicketsResponse>> handleTwoWayRequest(
+    public List<Pair<TicketResponse, TicketResponse>> handleTwoWayRequest(
             String sourceAirportCode,
             String destinationAirportCode,
             LocalDate departureDate,
@@ -97,7 +97,7 @@ public class TicketsService {
         );
 
         //return all matching pairs of direct and return flights
-        List<Pair<TicketsResponse, TicketsResponse>> twoWayResponses = new ArrayList<>();
+        List<Pair<TicketResponse, TicketResponse>> twoWayResponses = new ArrayList<>();
         for (Flight flight : flights) {
             Optional<Seat> seatOptional = getSeatByType(flight, seatType, personCount);
 
@@ -149,8 +149,8 @@ public class TicketsService {
         );
     }
 
-    private TicketsResponse mapToResponse(Flight flight, Seat seat, int personCount) {
-        return new TicketsResponse(
+    private TicketResponse mapToResponse(Flight flight, Seat seat, int personCount) {
+        return new TicketResponse(
                 flight.getId(),
                 seat.getPrice() * personCount,
                 flight.getDepartureTime(),

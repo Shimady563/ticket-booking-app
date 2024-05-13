@@ -1,6 +1,6 @@
 package com.shimady.ticketbookingapp.service;
 
-import com.shimady.ticketbookingapp.controller.dto.SeatsResponse;
+import com.shimady.ticketbookingapp.controller.dto.SeatResponse;
 import com.shimady.ticketbookingapp.model.Seat;
 import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.repository.SeatRepository;
@@ -13,22 +13,22 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class SeatsService {
+public class SeatService {
 
     private final SeatRepository seatRepository;
 
     @Autowired
-    public SeatsService(SeatRepository seatRepository) {
+    public SeatService(SeatRepository seatRepository) {
         this.seatRepository = seatRepository;
     }
 
     @Transactional(readOnly = true)
-    public List<SeatsResponse> getSeatsByFlightIdAndType(Long flightId, SeatType seatType) {
+    public List<SeatResponse> getSeatsByFlightIdAndType(Long flightId, SeatType seatType) {
         log.info("Getting seats of type {} for flight {}", seatType, flightId);
         return seatRepository
                 .findAllByFlightIdAndType(flightId, seatType)
                 .stream()
-                .map((seat -> new SeatsResponse(
+                .map((seat -> new SeatResponse(
                         seat.getId(),
                         seat.getNumber(),
                         seat.getPrice(),
@@ -44,8 +44,8 @@ public class SeatsService {
         return seatRepository.findAllById(seatIds);
     }
 
-    protected SeatsResponse mapToResponse(Seat seat) {
-        return new SeatsResponse(
+    protected SeatResponse mapToResponse(Seat seat) {
+        return new SeatResponse(
                 seat.getId(),
                 seat.getNumber(),
                 seat.getPrice(),

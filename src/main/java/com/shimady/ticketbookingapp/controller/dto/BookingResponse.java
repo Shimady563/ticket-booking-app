@@ -5,7 +5,7 @@ import java.util.Set;
 
 public record BookingResponse(
         LocalDateTime creationDate,
-        Set<SeatsResponse> seats,
+        Set<SeatResponse> seats,
         Set<PassengersResponse> passengers
 ) {
 }
