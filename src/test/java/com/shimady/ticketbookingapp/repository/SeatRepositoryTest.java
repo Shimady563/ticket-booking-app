@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @DataJpaTest
 public class SeatRepositoryTest {
@@ -55,22 +56,27 @@ public class SeatRepositoryTest {
     @Test
     public void testFindAllById() {
         List<Seat> seats = seatRepository.findAllById(seatIds);
-        assertThat(seats.size()).isEqualTo(seatIds.size());
-        assertThat(seatIds
-                .containsAll(seats
-                        .stream()
-                        .map(Seat::getId)
-                        .toList())).isTrue();
+        assertThat(seats)
+                .hasSameSizeAs(seatIds)
+                .extracting(Seat::getId)
+                .containsAll(seatIds);
     }
 
     @Test
     public void testFindAllByFlightIdAndType() {
         List<Seat> seats = seatRepository.findAllByFlightIdAndType(flightId, seatType);
 
-        assertThat(seats.size()).isEqualTo(1);
-
-        Seat seat = seats.get(0);
-        assertThat(seat.getFlight().getId()).isEqualTo(flightId);
-        assertThat(seat.getType()).isEqualTo(SeatType.ECONOMY);
+        assertThat(seats)
+                .hasSize(1)
+                .extracting(
+                        seat -> seat.getFlight().getId(),
+                        Seat::getType
+                )
+                .containsExactly(
+                        tuple(
+                                flightId,
+                                seatType
+                        )
+                );
     }
 }

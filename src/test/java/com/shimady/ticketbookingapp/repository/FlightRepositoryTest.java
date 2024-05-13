@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @DataJpaTest
 public class FlightRepositoryTest {
@@ -66,13 +67,22 @@ public class FlightRepositoryTest {
                 destinationAirportCode
         );
 
-        assertThat(flights.size()).isEqualTo(1);
+        assertThat(flights)
+                .hasSize(1)
+                .extracting(
+                        flight -> flight.getSourceAirport().getCode(),
+                        flight -> flight.getDestinationAirport().getCode()
+                )
+                .contains(
+                        tuple(
+                                sourceAirportCode,
+                                destinationAirportCode
+                        )
+                );
+        assertThat(flights.get(0).getSeats())
+                .hasSize(1)
+                .extracting(Seat::isBooked)
+                .isEqualTo(true);
 
-        Flight flight = flights.get(0);
-        assertThat(flight.getSourceAirport().getCode()).isEqualTo(sourceAirportCode);
-        assertThat(flight.getDestinationAirport().getCode()).isEqualTo(destinationAirportCode);
-        assertThat(flight.getSeats().size()).isEqualTo(1);
-        Seat seat = flight.getSeats().stream().findAny().get();
-        assertThat(seat.getBooking()).isNotNull();
     }
 }
