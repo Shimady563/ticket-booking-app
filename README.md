@@ -10,7 +10,7 @@ A restfull web application of ticket booking service. The core features include:
 
 ## Api description
 
-GET /search/one-way - Search for one-way flight tickets information
+GET /tickets/one-way - Search for one-way flight tickets information
 
     request parameters - Inforamation about departure date, 
     departure and arrival airports 
@@ -22,7 +22,7 @@ GET /search/one-way - Search for one-way flight tickets information
     overall tickets price,
     estimated time for flight
 
-GET /search/two-way - Search for two-way flight tickets information
+GET /tickets/two-way - Search for two-way flight tickets information
 
     request parameters - Inforamation about departure date,
     departure date for return flight
@@ -43,6 +43,23 @@ GET /seats - Get all seats with concrete type for given flight
     id (for further booking), serial number, price and type of every seat
     booking assosiated with every seat
     to determin if the seat is already booked
+
+GET /bookings - Get all bookings for current user
+
+    request parameters - No request parameters
+
+    repsonse body - Information about current user's bookings
+    list of all seats that were booked,
+    list of all passengers,
+    creation date
+
+POST /bookings/book - Create booking
+
+    request parameters - Flight id and seat type
+
+    repsonse body - Message about creation
+    list of all seat ids,
+    list of all passengers
 
 ## Technologies used
 
