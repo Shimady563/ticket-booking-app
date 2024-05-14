@@ -1,13 +1,8 @@
 package com.shimady.ticketbookingapp.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.NaturalId;
-
-import java.util.Objects;
-import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -15,7 +10,7 @@ import java.util.Set;
 @Table(name = "airport")
 public class Airport {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false)
@@ -27,29 +22,9 @@ public class Airport {
     @Column(name = "code", nullable = false)
     private String code;
 
-    @OneToMany(mappedBy = "sourceAirport", fetch = FetchType.LAZY)
-    private Set<Flight> departingFlights;
-
-    @OneToMany(mappedBy = "destinationAirport", fetch = FetchType.LAZY)
-    private Set<Flight> arrivingFlights;
-
-    public void addDepartingFlight(Flight flight) {
-        departingFlights.add(flight);
-        flight.setSourceAirport(this);
-    }
-
-    public void removeDepartingFlight(Flight flight) {
-        departingFlights.remove(flight);
-        flight.setSourceAirport(null);
-    }
-
-    public void addArrivalFlight(Flight flight) {
-        arrivingFlights.add(flight);
-        flight.setDestinationAirport(this);
-    }
-
-    public void removeArrivalFlight(Flight flight) {
-        arrivingFlights.remove(flight);
-        flight.setDestinationAirport(null);
+    public Airport(String name, String city, String code) {
+        this.name = name;
+        this.city = city;
+        this.code = code;
     }
 }

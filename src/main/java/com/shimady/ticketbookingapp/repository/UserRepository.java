@@ -1,0 +1,8 @@
+package com.shimady.ticketbookingapp.repository;
+
+
+import com.shimady.ticketbookingapp.model.User;
+import org.springframework.data.repository.CrudRepository;
+
+public interface UserRepository extends CrudRepository<User, Long> {
+}

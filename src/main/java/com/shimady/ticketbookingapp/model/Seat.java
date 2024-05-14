@@ -3,14 +3,16 @@ package com.shimady.ticketbookingapp.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 @Table(name = "seat")
 public class Seat {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "number")
@@ -27,8 +29,11 @@ public class Seat {
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
-    @OneToOne(mappedBy = "seat", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id")
     private Booking booking;
 
+    public boolean isBooked() {
+        return booking != null;
+    }
 }
