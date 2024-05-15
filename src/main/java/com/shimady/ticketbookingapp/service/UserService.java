@@ -1,5 +1,6 @@
 package com.shimady.ticketbookingapp.service;
 
+import com.shimady.ticketbookingapp.exception.ResourceNotFoundException;
 import com.shimady.ticketbookingapp.model.User;
 import com.shimady.ticketbookingapp.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class UserService {
         log.info("Getting user with id {}", userId);
         return userRepository
                 .findById(userId)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + userId + " not found"));
     }
 
     @Transactional
