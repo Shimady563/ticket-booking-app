@@ -2,7 +2,7 @@ package com.shimady.ticketbookingapp.service;
 
 import com.shimady.ticketbookingapp.controller.dto.BookingRequest;
 import com.shimady.ticketbookingapp.controller.dto.BookingResponse;
-import com.shimady.ticketbookingapp.controller.dto.PassengersResponse;
+import com.shimady.ticketbookingapp.controller.dto.PassengerResponse;
 import com.shimady.ticketbookingapp.exception.BadRequestException;
 import com.shimady.ticketbookingapp.exception.BookingException;
 import com.shimady.ticketbookingapp.model.Booking;
@@ -111,8 +111,8 @@ public class BookingService {
         );
     }
 
-    private PassengersResponse mapPassengersToResponse(Passenger passenger) {
-        return new PassengersResponse(
+    private PassengerResponse mapPassengersToResponse(Passenger passenger) {
+        return new PassengerResponse(
                 passenger.getFirstName(),
                 passenger.getLastName(),
                 passenger.getBirthDate(),

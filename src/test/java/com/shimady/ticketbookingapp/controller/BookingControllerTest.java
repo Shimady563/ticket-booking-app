@@ -3,7 +3,7 @@ package com.shimady.ticketbookingapp.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shimady.ticketbookingapp.controller.dto.BookingRequest;
 import com.shimady.ticketbookingapp.controller.dto.BookingResponse;
-import com.shimady.ticketbookingapp.controller.dto.PassengersResponse;
+import com.shimady.ticketbookingapp.controller.dto.PassengerResponse;
 import com.shimady.ticketbookingapp.controller.dto.SeatResponse;
 import com.shimady.ticketbookingapp.exception.BadRequestException;
 import com.shimady.ticketbookingapp.model.Passenger;
@@ -98,7 +98,7 @@ public class BookingControllerTest {
                 SeatType.ECONOMY,
                 true
         );
-        PassengersResponse passenger = new PassengersResponse(
+        PassengerResponse passenger = new PassengerResponse(
                 firstName,
                 "lname",
                 LocalDate.now(),

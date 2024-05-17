@@ -68,7 +68,6 @@ public class TicketControllerTest {
         )
                 .willReturn(responses);
 
-        // removed time fields from checking because of formatting issues
         mockMvc.perform(get("/tickets/one-way")
                         .accept(MediaType.APPLICATION_JSON)
                         .param("sourceAirportCode", sourceAirportCode)

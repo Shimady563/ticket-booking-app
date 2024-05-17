@@ -2,7 +2,7 @@ package com.shimady.ticketbookingapp.controller.dto;
 
 import java.time.LocalDate;
 
-public record PassengersResponse(
+public record PassengerResponse(
         String firstName,
         String lastName,
         LocalDate birthDate,

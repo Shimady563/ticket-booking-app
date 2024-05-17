@@ -2,7 +2,7 @@ package com.shimady.ticketbookingapp.service;
 
 import com.shimady.ticketbookingapp.controller.dto.BookingRequest;
 import com.shimady.ticketbookingapp.controller.dto.BookingResponse;
-import com.shimady.ticketbookingapp.controller.dto.PassengersResponse;
+import com.shimady.ticketbookingapp.controller.dto.PassengerResponse;
 import com.shimady.ticketbookingapp.controller.dto.SeatResponse;
 import com.shimady.ticketbookingapp.exception.BadRequestException;
 import com.shimady.ticketbookingapp.exception.BookingException;
@@ -163,7 +163,7 @@ public class BookingServiceTest {
                 .contains(id);
         assertThat(bookingResponse.passengers())
                 .hasSize(1)
-                .extracting(PassengersResponse::firstName)
+                .extracting(PassengerResponse::firstName)
                 .contains(firstName);
     }
 }
