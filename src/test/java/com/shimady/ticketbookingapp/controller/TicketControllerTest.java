@@ -1,5 +1,6 @@
 package com.shimady.ticketbookingapp.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shimady.ticketbookingapp.controller.dto.TicketResponse;
 import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.service.TicketService;
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TicketController.class)
@@ -30,6 +31,9 @@ public class TicketControllerTest {
 
     @MockBean
     private TicketService ticketService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     public void shouldReturnOneWayTicketsInfo() throws Exception {
@@ -53,6 +57,8 @@ public class TicketControllerTest {
         SeatType seatType = SeatType.ECONOMY;
         int personCount = 1;
 
+        List<TicketResponse> responses = List.of(ticketResponse);
+
         given(ticketService.handleOneWayRequest(
                 eq(sourceAirportCode),
                 eq(destinationAirportCode),
@@ -60,20 +66,20 @@ public class TicketControllerTest {
                 eq(seatType),
                 eq(personCount))
         )
-                .willReturn(List.of(ticketResponse));
+                .willReturn(responses);
 
         // removed time fields from checking because of formatting issues
-        mockMvc.perform(get("/tickets/one-way").accept(MediaType.APPLICATION_JSON)
+        mockMvc.perform(get("/tickets/one-way")
+                        .accept(MediaType.APPLICATION_JSON)
                         .param("sourceAirportCode", sourceAirportCode)
                         .param("destinationAirportCode", destinationAirportCode)
                         .param("departureDate", departureDate.toString())
                         .param("seatType", seatType.toString())
                         .param("personCount", String.valueOf(personCount)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].flightId").value(1L))
-                .andExpect(jsonPath("$[0].overallPrice").value(1000))
-                .andExpect(jsonPath("$[0].departureCity").value("city1"))
-                .andExpect(jsonPath("$[0].arrivalCity").value("city2"));
+                .andExpect(content()
+                        .json(objectMapper.writeValueAsString(responses))
+                );
     }
 
     @Test
@@ -113,6 +119,10 @@ public class TicketControllerTest {
         SeatType seatType = SeatType.ECONOMY;
         int personCount = 1;
 
+        List<Pair<TicketResponse, TicketResponse>> responses = List.of(
+                Pair.of(ticketResponse1, ticketResponse2)
+        );
+
         given(ticketService.handleTwoWayRequest(
                 eq(sourceAirportCode),
                 eq(destinationAirportCode),
@@ -121,9 +131,10 @@ public class TicketControllerTest {
                 eq(seatType),
                 eq(personCount))
         )
-                .willReturn(List.of(Pair.of(ticketResponse1, ticketResponse2)));
+                .willReturn(responses);
 
-        mockMvc.perform(get("/tickets/two-way").accept(MediaType.APPLICATION_JSON)
+        mockMvc.perform(get("/tickets/two-way")
+                        .accept(MediaType.APPLICATION_JSON)
                         .param("sourceAirportCode", sourceAirportCode)
                         .param("destinationAirportCode", destinationAirportCode)
                         .param("departureDate", departureDate.toString())
@@ -131,13 +142,8 @@ public class TicketControllerTest {
                         .param("seatType", seatType.toString())
                         .param("personCount", String.valueOf(personCount)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].first.flightId").value(1L))
-                .andExpect(jsonPath("$[0].first.overallPrice").value(1000))
-                .andExpect(jsonPath("$[0].first.departureCity").value("city1"))
-                .andExpect(jsonPath("$[0].first.arrivalCity").value("city2"))
-                .andExpect(jsonPath("$[0].second.flightId").value(2L))
-                .andExpect(jsonPath("$[0].second.overallPrice").value(2000))
-                .andExpect(jsonPath("$[0].second.departureCity").value("city2"))
-                .andExpect(jsonPath("$[0].second.arrivalCity").value("city1"));
+                .andExpect(content()
+                        .json(objectMapper
+                                .writeValueAsString(responses)));
     }
 }
