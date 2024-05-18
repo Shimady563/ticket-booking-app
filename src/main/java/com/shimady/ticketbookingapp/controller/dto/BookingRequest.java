@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public record BookingRequest(
-        List<Long> seatsIds,
+        List<Long> seatIds,
         Set<Passenger> passengers
 ) {
 }

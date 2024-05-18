@@ -62,10 +62,10 @@ public class TicketService {
                 departureDate
         );
 
-        List<TicketResponse> ticketRespons = new ArrayList<>();
+        List<TicketResponse> ticketResponses = new ArrayList<>();
         for (Flight flight : flights) {
             getSeatByType(flight, seatType, personCount)
-                    .ifPresent(seat -> ticketRespons
+                    .ifPresent(seat -> ticketResponses
                             .add(mapToResponse(flight, seat, personCount)));
         }
 
@@ -73,7 +73,7 @@ public class TicketService {
                 " from airport {}" +
                 " to airport {}, on {}",
                 seatType, sourceAirportCode, destinationAirportCode, departureDate);
-        return ticketRespons;
+        return ticketResponses;
     }
 
     @Transactional(readOnly = true)

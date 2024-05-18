@@ -49,9 +49,9 @@ public class BookingService {
         // in the future user will be retrieved trough userDetails service impl
         Long id = 1L;
         User user = userService.getUserById(id);
-        List<Seat> seats = seatService.getAllSeatsByIds(request.seatsIds());
+        List<Seat> seats = seatService.getAllSeatsByIds(request.seatIds());
 
-        if (seats.size() != request.seatsIds().size()) {
+        if (seats.size() != request.seatIds().size()) {
             throw new BadRequestException("Non-existing seat ids in request");
         }
 

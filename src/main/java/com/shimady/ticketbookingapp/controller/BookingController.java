@@ -24,7 +24,7 @@ public class BookingController {
     @PostMapping("/book")
     @ResponseStatus(HttpStatus.CREATED)
     public void bookSeats(@RequestBody BookingRequest request) {
-        if (request.passengers().size() != request.seatsIds().size()) {
+        if (request.passengers().size() != request.seatIds().size()) {
             throw new BadRequestException("Wrong number of passengers or seats");
         }
 
