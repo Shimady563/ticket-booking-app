@@ -31,6 +31,6 @@ public class UserService {
     @Transactional
     public void updateUser(User user) {
         userRepository.save(user);
-        log.info("Updated user {} with login {}", user.getId(), user.getLogin());
+        log.info("Updated user {} with login {}", user.getId(), user.getUsername());
     }
 }
