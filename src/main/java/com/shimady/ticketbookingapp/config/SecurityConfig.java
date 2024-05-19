@@ -37,13 +37,14 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable) //disable csrf for postman testing
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/users/signup").permitAll()
+                        .requestMatchers("/user/signup", "/tickets/*", "/seats").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
-                        .loginPage("/users/login")
+                        .loginPage("/user/login").permitAll()
+                        .defaultSuccessUrl("/user")
                         .failureHandler(authenticationFailureHandler()))
                 .logout(logout -> logout
-                        .logoutUrl("/users/logout"))
+                        .logoutUrl("/user/logout").permitAll())
                 .build();
     }
 }
