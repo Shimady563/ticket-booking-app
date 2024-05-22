@@ -1,6 +1,7 @@
 package com.shimady.ticketbookingapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shimady.ticketbookingapp.TestSecurityConfig;
 import com.shimady.ticketbookingapp.controller.dto.BookingRequest;
 import com.shimady.ticketbookingapp.controller.dto.BookingResponse;
 import com.shimady.ticketbookingapp.controller.dto.PassengerResponse;
@@ -13,7 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -30,6 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Import(TestSecurityConfig.class)
 @WebMvcTest(BookingController.class)
 public class BookingControllerTest {
 
@@ -43,6 +48,7 @@ public class BookingControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser
     public void shouldHandleCreationRequest() throws Exception {
         Passenger passenger1 = new Passenger();
         passenger1.setFirstName("name1");
@@ -64,6 +70,7 @@ public class BookingControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void shouldThrowExceptionWhenWrongNumberOfSeatsInRequest() throws Exception {
         Passenger passenger1 = new Passenger();
         passenger1.setFirstName("name1");
@@ -88,6 +95,7 @@ public class BookingControllerTest {
 
 
     @Test
+    @WithMockUser
     public void shouldReturnBookingsForUser() throws Exception {
         Long seatId = 1L;
         String firstName = "name";
@@ -123,5 +131,22 @@ public class BookingControllerTest {
                 .andExpect(content()
                         .json(objectMapper.
                                 writeValueAsString(responses)));
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void getBookingsShouldReturnUnauthorizedResponseWhenUserNotAuthorized() throws Exception {
+        mockMvc.perform(get("/bookings")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isFound());
+    }
+
+    @Test
+    @WithAnonymousUser
+    public void bookSeatsShouldReturnUnauthorizedResponseWhenUserNotAuthorized() throws Exception {
+        mockMvc.perform(post("/bookings/book")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isFound());
+
     }
 }

@@ -82,7 +82,7 @@ public class FlightRepositoryTest {
         assertThat(flights.get(0).getSeats())
                 .hasSize(1)
                 .extracting(Seat::isBooked)
-                .isEqualTo(true);
+                .containsExactly(true);
 
     }
 }

@@ -1,6 +1,8 @@
 package com.shimady.ticketbookingapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shimady.ticketbookingapp.TestSecurityConfig;
+import com.shimady.ticketbookingapp.config.SecurityConfig;
 import com.shimady.ticketbookingapp.controller.dto.TicketResponse;
 import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.service.TicketService;
@@ -8,8 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -23,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Import(TestSecurityConfig.class)
 @WebMvcTest(TicketController.class)
 public class TicketControllerTest {
 
@@ -36,6 +44,7 @@ public class TicketControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @WithAnonymousUser
     public void shouldReturnOneWayTicketsInfo() throws Exception {
         LocalDateTime departureTime = LocalDateTime.now();
         LocalDateTime arrivalTime = LocalDateTime.now().plusHours(6);
@@ -82,6 +91,7 @@ public class TicketControllerTest {
     }
 
     @Test
+    @WithAnonymousUser
     public void shouldReturnTwoWayTicketsInfo() throws Exception {
         LocalDateTime departureTime1 = LocalDate.now().atStartOfDay();
         LocalDateTime arrivalTime1 = departureTime1.plusHours(6);
