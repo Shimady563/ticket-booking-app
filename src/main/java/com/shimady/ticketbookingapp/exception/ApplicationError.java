@@ -1,7 +1,6 @@
 package com.shimady.ticketbookingapp.exception;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 

@@ -1,7 +1,10 @@
 package com.shimady.ticketbookingapp.service;
 
 import com.shimady.ticketbookingapp.controller.dto.TicketResponse;
-import com.shimady.ticketbookingapp.model.*;
+import com.shimady.ticketbookingapp.model.Airport;
+import com.shimady.ticketbookingapp.model.Flight;
+import com.shimady.ticketbookingapp.model.Seat;
+import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.repository.FlightRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

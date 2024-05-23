@@ -2,7 +2,6 @@ package com.shimady.ticketbookingapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shimady.ticketbookingapp.TestSecurityConfig;
-import com.shimady.ticketbookingapp.config.SecurityConfig;
 import com.shimady.ticketbookingapp.controller.dto.TicketResponse;
 import com.shimady.ticketbookingapp.model.SeatType;
 import com.shimady.ticketbookingapp.service.TicketService;
@@ -10,12 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.MockMvc;
 
