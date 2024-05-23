@@ -45,10 +45,7 @@ public class BookingService {
 
     @Transactional
     public void handleCreationRequest(BookingRequest request) {
-        // for now hardcoding user search
-        // in the future user will be retrieved trough userDetails service impl
-        Long id = 1L;
-        User user = userService.getUserById(id);
+        User user = userService.retrieveCurrentUser();
         List<Seat> seats = seatService.getAllSeatsByIds(request.seatIds());
 
         if (seats.size() != request.seatIds().size()) {
@@ -82,14 +79,13 @@ public class BookingService {
         userService.updateUser(user);
         passengerRepository.saveAll(existingPassengers);
         bookingRepository.save(booking);
-        log.info("Created booking {} for user {} with login {}", booking.getId(), user.getId(), user.getLogin());
+        log.info("Created booking {} for user {} with login {}", booking.getId(), user.getId(), user.getUsername());
     }
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getBookingsByUser() {
-        Long id = 1L;
-        User user = userService.getUserById(id);
-        log.info("Getting bookings for user {} with login {}", user.getId(), user.getLogin());
+        User user = userService.retrieveCurrentUser();
+        log.info("Getting bookings for user {} with login {}", user.getId(), user.getUsername());
         return user
                 .getBookings()
                 .stream()

@@ -1,6 +1,5 @@
 package com.shimady.ticketbookingapp.repository;
 
-import com.shimady.ticketbookingapp.model.Booking;
 import com.shimady.ticketbookingapp.model.Passenger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

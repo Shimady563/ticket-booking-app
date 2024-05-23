@@ -67,7 +67,7 @@ public class BookingServiceTest {
         passenger2.setFirstName("name2");
         Set<Passenger> passengers = Set.of(passenger1, passenger2);
 
-        given(userService.getUserById(eq(userId))).willReturn(user);
+        given(userService.retrieveCurrentUser()).willReturn(user);
         given(seatService.getAllSeatsByIds(eq(seatIds))).willReturn(seats);
 
         bookingService.handleCreationRequest(
@@ -137,7 +137,7 @@ public class BookingServiceTest {
         user.setId(id);
         user.setBookings(Set.of(booking));
 
-        given(userService.getUserById(eq(id))).willReturn(user);
+        given(userService.retrieveCurrentUser()).willReturn(user);
         given(seatService
                 .mapToResponse(eq(seat)))
                 .willReturn(

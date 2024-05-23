@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserRepositoryTest {
 
     private Long userId;
+    private final String username = "username";
 
     @Autowired
     private UserRepository userRepository;
@@ -25,6 +26,7 @@ public class UserRepositoryTest {
     @BeforeEach
     public void setUp() {
         User user = new User();
+        user.setUsername(username);
         entityManager.persist(user);
         entityManager.flush();
         userId = user.getId();
@@ -38,6 +40,16 @@ public class UserRepositoryTest {
 
         User user = userOptional.get();
         assertThat(user.getId()).isEqualTo(userId);
+    }
+
+    @Test
+    public void testFindByUsername() {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+
+        assertThat(userOptional.isPresent()).isTrue();
+
+        User user = userOptional.get();
+        assertThat(user.getUsername()).isEqualTo(username);
     }
 
     @Test
