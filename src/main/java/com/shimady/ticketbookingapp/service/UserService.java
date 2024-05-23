@@ -63,7 +63,6 @@ public class UserService {
         user.setUsername(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());
         user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        System.out.println("User password: " + user.getPassword());
 
         updateUser(user);
     }
@@ -77,7 +76,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User retrieveCurrentUser() {
+    protected User retrieveCurrentUser() {
         Long userId = getCurrentUserInfo().id();
         return getUserById(userId);
     }
