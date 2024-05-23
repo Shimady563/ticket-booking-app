@@ -3,12 +3,31 @@
 ## Overview
 
 A restfull web application of ticket booking service. The core features include:
+
 - Account creation for faster ticket purchases,
 - Search for one-way flight tickets,
 - Search for two-way flight tickets,
 - Ticket booking and prepayment option
 
+## Technologies used
+
+- Application is based on Spring and Spring Boot
+- For data access I use PostgreSql, Hibernate and Spring Data JPA
+- For testing I use Spring's test options
+
+## Future plans
+
+After completing implementation of core futures,
+I plan to create api documentation with swagger.
+I will be adding more api description
+as I implement more endpoints.
+I also plan to add features
+to search and book tickets for hotels
+in addition to flight tickets booking.
+
 ## Api description
+
+### For all users
 
 GET /tickets/one-way - Search for one-way flight tickets information
 
@@ -40,9 +59,39 @@ GET /seats - Get all seats with concrete type for given flight
     request parameters - Flight id and seat type
 
     repsonse body - Information about seats
-    id (for further booking), serial number, price and type of every seat
+    id (for further booking), serial number, 
+    price and type of every seat
     booking assosiated with every seat
     to determin if the seat is already booked
+
+POST /user/login - Login in your account
+
+    request parameters - Username and password
+
+    repsonse - Redirection to
+    user info page
+    or previous page
+
+POST /user/signup - Create an account
+
+    request parameters - Username, email, password
+
+    repsonse - result message
+
+### Only for authenticated users
+
+GET /user - Get current user info
+
+    no request parameters
+
+    repsonse body - Current user info
+    user id, username, email
+
+PUT /user - Update current user
+
+    request parameters - User id, new credentials
+
+    repsonse body - Result message
 
 GET /bookings - Get all bookings for current user
 
@@ -60,19 +109,3 @@ POST /bookings/book - Create booking
     repsonse body - Message about creation
     list of all seat ids,
     list of all passengers
-
-## Technologies used
-
-- Application is based on Spring and Spring Boot
-- For data access I use PostgreSql, Hibernate and Spring Data JPA
-- For testing I use Spring's test options
-
-## Future plans
-
-After completing implementation of core futures, 
-I plan to create api documentation with swagger.
-I will be adding more api description
-as I implement more endpoints.
-I also plan to add features 
-to search and book tickets for hotels
-in addition to flight tickets booking.
