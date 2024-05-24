@@ -31,6 +31,9 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "enabled")
+    private boolean enabled = false;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Booking> bookings;
 
@@ -66,6 +69,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
