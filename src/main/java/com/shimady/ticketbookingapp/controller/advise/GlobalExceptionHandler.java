@@ -1,9 +1,6 @@
 package com.shimady.ticketbookingapp.controller.advise;
 
-import com.shimady.ticketbookingapp.exception.ApplicationError;
-import com.shimady.ticketbookingapp.exception.BadRequestException;
-import com.shimady.ticketbookingapp.exception.BookingException;
-import com.shimady.ticketbookingapp.exception.ResourceNotFoundException;
+import com.shimady.ticketbookingapp.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -52,7 +49,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<Object> handleSQLException(DataAccessException e) {
+    public ResponseEntity<ApplicationError> handleSQLException(DataAccessException e) {
+        log.error(e.getMessage());
+        return new ResponseEntity<>(
+                new ApplicationError(
+                        e.getCause().getMessage(),
+                        HttpStatus.CONFLICT.value()
+                ),
+                HttpStatus.CONFLICT
+        );
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ApplicationError> handleTokenExpiredException(TokenExpiredException e) {
         log.error(e.getMessage());
         return new ResponseEntity<>(
                 new ApplicationError(
