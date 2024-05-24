@@ -2,11 +2,13 @@ package com.shimady.ticketbookingapp.service;
 
 import com.shimady.ticketbookingapp.controller.dto.UserInfo;
 import com.shimady.ticketbookingapp.controller.dto.UserRequest;
+import com.shimady.ticketbookingapp.event.UserCreatedEvent;
 import com.shimady.ticketbookingapp.exception.ResourceNotFoundException;
 import com.shimady.ticketbookingapp.model.User;
 import com.shimady.ticketbookingapp.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,11 +23,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserService(
+            PasswordEncoder passwordEncoder,
+            UserRepository userRepository,
+            ApplicationEventPublisher eventPublisher
+    ) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -72,6 +80,7 @@ public class UserService {
         User user = mapToUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        eventPublisher.publishEvent(new UserCreatedEvent(user.getId()));
         log.info("Created user {} with username {}", user.getId(), user.getUsername());
     }
 
@@ -79,6 +88,13 @@ public class UserService {
     protected User retrieveCurrentUser() {
         Long userId = getCurrentUserInfo().id();
         return getUserById(userId);
+    }
+
+    @Transactional
+    public void enableUser(User user) {
+        user.setEnabled(true);
+        log.info("Enabling user {} with username {}", user.getId(), user.getUsername());
+        updateUser(user);
     }
 
     public UserInfo getCurrentUserInfo() {
