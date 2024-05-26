@@ -1,5 +1,6 @@
 package com.shimady.ticketbookingapp.service;
 
+import com.shimady.ticketbookingapp.event.TokenCreatedEvent;
 import com.shimady.ticketbookingapp.exception.ResourceNotFoundException;
 import com.shimady.ticketbookingapp.exception.TokenExpiredException;
 import com.shimady.ticketbookingapp.model.Token;
@@ -7,6 +8,7 @@ import com.shimady.ticketbookingapp.model.User;
 import com.shimady.ticketbookingapp.repository.TokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +20,13 @@ public class TokenService {
 
     private final TokenRepository tokenRepository;
     private final UserService userService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public TokenService(TokenRepository tokenRepository, UserService userService) {
+    public TokenService(TokenRepository tokenRepository, UserService userService, ApplicationEventPublisher eventPublisher) {
         this.tokenRepository = tokenRepository;
         this.userService = userService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -48,17 +52,17 @@ public class TokenService {
     public void createToken(User user) {
         String tokenBody = UUID.randomUUID().toString();
         Token token = new Token(tokenBody, user);
-        log.info("Creating token {} for user {} with username {}",
-                tokenBody, user.getId(), user.getUsername());
         saveToken(token);
+        eventPublisher.publishEvent(new TokenCreatedEvent(token.getToken(), user.getEmail()));
     }
 
     @Transactional
     public void verifyToken(String tokenBody) {
+        log.info("Verifying token {}", tokenBody);
         Token token = getToken(tokenBody);
 
         if (token.isExpired()) {
-            throw new TokenExpiredException("Token " + tokenBody + "is expired");
+            throw new TokenExpiredException("Token " + tokenBody + " is expired");
         }
 
         userService.enableUser(token.getUser());
