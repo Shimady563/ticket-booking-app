@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class UserService {
@@ -105,6 +107,10 @@ public class UserService {
                         .getAuthentication()
                         .getPrincipal()
         );
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAllFetchBookings();
     }
 
     private UserInfo mapToInfo(User user) {
