@@ -38,7 +38,7 @@ public class TokenService {
 
     @Transactional
     public void deleteToken(Token token) {
-        log.info("Deleting token {}", token);
+        log.info("Deleting token {}", token.getToken());
         tokenRepository.delete(token);
     }
 

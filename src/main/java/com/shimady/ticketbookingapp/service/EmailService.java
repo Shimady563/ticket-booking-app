@@ -2,6 +2,7 @@ package com.shimady.ticketbookingapp.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    private final MailSender mailSender;
 
     @Autowired
-    public EmailService(JavaMailSender mailSender) {
+    public EmailService(MailSender mailSender) {
         this.mailSender = mailSender;
     }
 
