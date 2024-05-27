@@ -14,14 +14,14 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @Slf4j
-public class EventListener {
+public class CreationEventListener {
 
     private final TokenService tokenService;
     private final UserService userService;
     private final EmailService emailService;
 
     @Autowired
-    public EventListener(TokenService tokenService, UserService userService, EmailService emailService) {
+    public CreationEventListener(TokenService tokenService, UserService userService, EmailService emailService) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.emailService = emailService;
