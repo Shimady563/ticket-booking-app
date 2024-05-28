@@ -15,6 +15,6 @@ public interface UserRepository extends ListCrudRepository<User, Long> {
 
     @Query("select u " +
             "from User u " +
-            "join fetch u.bookings")
+            "left join fetch u.bookings")
     List<User> findAllFetchBookings();
 }
