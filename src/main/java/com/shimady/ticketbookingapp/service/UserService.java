@@ -25,7 +25,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
     public UserService(
@@ -110,6 +110,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
+        log.info("Getting all users");
         return userRepository.findAllFetchBookings();
     }
 
