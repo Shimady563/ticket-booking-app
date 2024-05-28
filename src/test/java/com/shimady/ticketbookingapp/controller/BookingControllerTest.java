@@ -136,14 +136,16 @@ public class BookingControllerTest {
     @Test
     @WithAnonymousUser
     public void getBookingsShouldReturnUnauthorizedResponseWhenUserNotAuthorized() throws Exception {
-        mockMvc.perform(get("/bookings"))
+        mockMvc.perform(get("/bookings")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isFound());
     }
 
     @Test
     @WithAnonymousUser
     public void bookSeatsShouldReturnUnauthorizedResponseWhenUserNotAuthorized() throws Exception {
-        mockMvc.perform(post("/bookings/book"))
+        mockMvc.perform(post("/bookings/book")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isFound());
 
     }

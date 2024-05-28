@@ -56,14 +56,15 @@ public class SeatControllerTest {
         );
 
         List<SeatResponse> responses = List.of(seatResponse1, seatResponse2);
-        
+
         given(seatService.getSeatsByFlightIdAndType(
                 eq(flightId),
                 eq(type)
         ))
                 .willReturn(responses);
 
-        mockMvc.perform(get("/seats").accept(MediaType.APPLICATION_JSON)
+        mockMvc.perform(get("/seats")
+                        .accept(MediaType.APPLICATION_JSON)
                         .param("flightId", flightId.toString())
                         .param("seatType", type.toString()))
                 .andExpect(status().isOk())

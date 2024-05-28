@@ -66,7 +66,7 @@ public class UserControllerTest {
         given(userService.getCurrentUserInfo()).willReturn(userInfo);
 
         mockMvc.perform(get("/user")
-                .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(userInfo)));
     }
@@ -74,7 +74,8 @@ public class UserControllerTest {
     @Test
     @WithAnonymousUser
     public void getUserShouldReturnUnauthorizedResponseWhenUserNotAuthorized() throws Exception {
-        mockMvc.perform(get("/user"))
+        mockMvc.perform(get("/user")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isFound());
     }
 
@@ -100,7 +101,8 @@ public class UserControllerTest {
     @Test
     @WithAnonymousUser
     public void updateUserShouldReturnUnauthorizedResponseWhenUserNotAuthorized() throws Exception {
-        mockMvc.perform(put("/user"))
+        mockMvc.perform(put("/user")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isFound());
     }
 }

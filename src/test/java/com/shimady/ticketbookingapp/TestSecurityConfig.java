@@ -2,7 +2,6 @@ package com.shimady.ticketbookingapp;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,7 +27,13 @@ public class TestSecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable) //disable csrf for postman testing
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/user/signup", "/tickets/*", "/seats", "/token*").permitAll()
+                        .requestMatchers(
+                                "/user/signup",
+                                "/tickets/*",
+                                "/seats",
+                                "/token",
+                                "/token/update"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/user/login").permitAll()
