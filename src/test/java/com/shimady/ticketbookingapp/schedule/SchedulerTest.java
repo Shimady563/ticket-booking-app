@@ -28,7 +28,6 @@ public class SchedulerTest {
     @Mock
     private EmailService emailService;
 
-    @Spy
     @InjectMocks
     private Scheduler scheduler;
 
