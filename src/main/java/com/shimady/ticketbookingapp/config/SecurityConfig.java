@@ -37,7 +37,13 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable) //disable csrf for postman testing
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/user/signup", "/tickets/*", "/seats", "/token*").permitAll()
+                        .requestMatchers(
+                                "/user/signup",
+                                "/tickets/*",
+                                "/seats",
+                                "/token",
+                                "/token/update"
+                        ).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/user/login").permitAll()
