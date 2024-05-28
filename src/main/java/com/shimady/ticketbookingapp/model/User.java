@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,8 +32,11 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "enabled")
+    private Boolean enabled = false;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<Booking> bookings;
+    private Set<Booking> bookings = new HashSet<>();
 
     public void addBooking(Booking booking) {
         bookings.add(booking);
@@ -66,6 +70,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

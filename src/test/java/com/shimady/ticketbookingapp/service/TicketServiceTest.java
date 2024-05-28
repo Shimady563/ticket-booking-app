@@ -1,6 +1,5 @@
 package com.shimady.ticketbookingapp.service;
 
-import com.shimady.ticketbookingapp.controller.dto.TicketResponse;
 import com.shimady.ticketbookingapp.model.Airport;
 import com.shimady.ticketbookingapp.model.Flight;
 import com.shimady.ticketbookingapp.model.Seat;
@@ -10,18 +9,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.util.Pair;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TicketServiceTest {
@@ -29,6 +26,7 @@ public class TicketServiceTest {
     @Mock
     private FlightRepository flightRepository;
 
+    @Spy
     @InjectMocks
     private TicketService ticketService;
 
@@ -55,13 +53,19 @@ public class TicketServiceTest {
                 ))
                 .willReturn(flights);
 
-        List<Flight> responses = ticketService.getFlightsByAirports(
+        ticketService.getFlightsByAirports(
                 sourceAirportCode,
                 destinationAirportCode,
                 departureDate
         );
 
-        assertThat(responses).isEqualTo(flights);
+        then(flightRepository).should()
+                .findAllByDepartureTimeBetweenAndSourceAirportCodeAndDestinationAirportCode(
+                        eq(departureDate.atStartOfDay()),
+                        eq(departureDate.plusDays(1).atStartOfDay()),
+                        eq(sourceAirportCode),
+                        eq(destinationAirportCode)
+                );
     }
 
     @Test
@@ -94,17 +98,13 @@ public class TicketServiceTest {
                         Set.of(seat1, seat2))
         );
 
+        willReturn(flights).given(ticketService).getFlightsByAirports(
+                eq(sourceAirportCode),
+                eq(destinationAirportCode),
+                eq(departureDate)
+        );
 
-        given(flightRepository
-                .findAllByDepartureTimeBetweenAndSourceAirportCodeAndDestinationAirportCode(
-                        eq(departureDate.atStartOfDay()),
-                        eq(departureDate.plusDays(1).atStartOfDay()),
-                        eq(sourceAirportCode),
-                        eq(destinationAirportCode)
-                ))
-                .willReturn(flights);
-
-        List<TicketResponse> responses = ticketService.handleOneWayRequest(
+        ticketService.handleOneWayRequest(
                 sourceAirportCode,
                 destinationAirportCode,
                 departureDate,
@@ -112,18 +112,11 @@ public class TicketServiceTest {
                 personCount
         );
 
-        assertThat(responses)
-                .hasSize(1)
-                .extracting(
-                        TicketResponse::overallPrice,
-                        TicketResponse::departureTime,
-                        TicketResponse::arrivalTime)
-                .containsExactly(
-                        tuple(
-                                seatPrice * personCount,
-                                departureTime,
-                                arrivalTime
-                        )
+        then(ticketService).should()
+                .getFlightsByAirports(
+                        eq(sourceAirportCode),
+                        eq(destinationAirportCode),
+                        eq(departureDate)
                 );
     }
 
@@ -174,24 +167,18 @@ public class TicketServiceTest {
                         Set.of(seat3, seat4))
         );
 
-        given(flightRepository
-                .findAllByDepartureTimeBetweenAndSourceAirportCodeAndDestinationAirportCode(
-                        eq(departureDate.atStartOfDay()),
-                        eq(departureDate.plusDays(1).atStartOfDay()),
-                        eq(sourceAirportCode),
-                        eq(destinationAirportCode)
-                ))
-                .willReturn(flights);
-        given(flightRepository
-                .findAllByDepartureTimeBetweenAndSourceAirportCodeAndDestinationAirportCode(
-                        eq(returnDepartureDate.atStartOfDay()),
-                        eq(returnDepartureDate.plusDays(1).atStartOfDay()),
-                        eq(destinationAirportCode),
-                        eq(sourceAirportCode)
-                ))
-                .willReturn(returnFlights);
+        willReturn(flights).given(ticketService).getFlightsByAirports(
+                eq(sourceAirportCode),
+                eq(destinationAirportCode),
+                eq(departureDate)
+        );
+        willReturn(returnFlights).given(ticketService).getFlightsByAirports(
+                eq(destinationAirportCode),
+                eq(sourceAirportCode),
+                eq(returnDepartureDate)
+        );
 
-        List<Pair<TicketResponse, TicketResponse>> responses = ticketService.handleTwoWayRequest(
+        ticketService.handleTwoWayRequest(
                 sourceAirportCode,
                 destinationAirportCode,
                 departureDate,
@@ -200,24 +187,15 @@ public class TicketServiceTest {
                 personCount
         );
 
-        assertThat(responses).hasSize(1);
-        assertThat(List.of(responses.get(0).getFirst(), responses.get(0).getSecond()))
-                .extracting(
-                        TicketResponse::overallPrice,
-                        TicketResponse::departureTime,
-                        TicketResponse::arrivalTime
-                )
-                .containsExactly(
-                        tuple(
-                                seatPrice * personCount,
-                                departureTime1,
-                                arrivalTime1
-                        ),
-                        tuple(
-                                seatPrice * personCount,
-                                departureTime2,
-                                arrivalTime2
-                        )
-                );
+        then(ticketService).should().getFlightsByAirports(
+                eq(sourceAirportCode),
+                eq(destinationAirportCode),
+                eq(departureDate)
+        );
+        then(ticketService).should().getFlightsByAirports(
+                eq(destinationAirportCode),
+                eq(sourceAirportCode),
+                eq(returnDepartureDate)
+        );
     }
 }

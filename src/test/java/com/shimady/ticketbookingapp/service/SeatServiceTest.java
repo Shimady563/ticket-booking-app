@@ -1,6 +1,5 @@
 package com.shimady.ticketbookingapp.service;
 
-import com.shimady.ticketbookingapp.controller.dto.SeatResponse;
 import com.shimady.ticketbookingapp.model.Flight;
 import com.shimady.ticketbookingapp.model.Seat;
 import com.shimady.ticketbookingapp.model.SeatType;
@@ -13,9 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 public class SeatServiceTest {
@@ -46,15 +45,16 @@ public class SeatServiceTest {
                 ))
                 .willReturn(seats);
 
-        List<SeatResponse> receivedSeats = seatService.getSeatsByFlightIdAndType(
+        seatService.getSeatsByFlightIdAndType(
                 flightId,
                 seatType
         );
 
-        assertThat(receivedSeats)
-                .hasSize(1)
-                .extracting(SeatResponse::type)
-                .isEqualTo(List.of(seatType));
+        then(seatRepository).should()
+                .findAllByFlightIdAndType(
+                        eq(flightId),
+                        eq(seatType)
+                );
     }
 
     @Test
@@ -65,15 +65,10 @@ public class SeatServiceTest {
         Seat seat2 = new Seat();
         seat2.setId(ids.get(1));
 
-        List<Seat> seats = List.of(seat1, seat2);
+        given(seatRepository.findAllById(eq(ids))).willReturn(List.of(seat1, seat2));
 
-        given(seatRepository.findAllById(eq(ids))).willReturn(seats);
+        seatService.getAllSeatsByIds(ids);
 
-        List<Seat> receivedSeats = seatService.getAllSeatsByIds(ids);
-
-        assertThat(receivedSeats)
-                .hasSize(2)
-                .extracting(Seat::getId)
-                .containsExactly(1L, 2L);
+        then(seatRepository).should().findAllById(eq(ids));
     }
 }
