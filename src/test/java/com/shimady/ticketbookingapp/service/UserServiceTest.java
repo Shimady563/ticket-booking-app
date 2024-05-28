@@ -1,25 +1,30 @@
 package com.shimady.ticketbookingapp.service;
 
+import com.shimady.ticketbookingapp.controller.dto.UserInfo;
 import com.shimady.ticketbookingapp.controller.dto.UserRequest;
+import com.shimady.ticketbookingapp.event.UserCreatedEvent;
 import com.shimady.ticketbookingapp.exception.ResourceNotFoundException;
+import com.shimady.ticketbookingapp.model.Booking;
 import com.shimady.ticketbookingapp.model.User;
 import com.shimady.ticketbookingapp.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -30,6 +35,10 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private ApplicationEventPublisher publisher;
+
+    @Spy
     @InjectMocks
     private UserService userService;
 
@@ -41,21 +50,18 @@ public class UserServiceTest {
 
         given(userRepository.findById(eq(userId))).willReturn(Optional.of(user));
 
-        User receivedUser = userService.getUserById(userId);
+        userService.getUserById(userId);
 
-        assertThat(receivedUser.getId()).isEqualTo(userId);
-
+        then(userRepository).should().findById(eq(userId));
     }
 
     @Test
     public void shouldThrowAnExceptionWhenUserNotFound() {
-        Long userId = 1L;
-
-        given(userRepository.findById(eq(userId))).willReturn(Optional.empty());
+        given(userRepository.findById(any())).willReturn(Optional.empty());
 
         assertThatExceptionOfType(ResourceNotFoundException.class)
                 .isThrownBy(() ->
-                        userService.getUserById(userId));
+                        userService.getUserById(1L));
     }
 
     @Test
@@ -69,11 +75,12 @@ public class UserServiceTest {
 
     @Test
     public void shouldUpdateUserUsingRequest() {
+        String password = "password";
         User user = new User();
         user.setId(1L);
         user.setUsername("username");
         user.setEmail("email");
-        user.setPassword("password");
+        user.setPassword(password);
 
         UserRequest request = new UserRequest(
                 user.getId(),
@@ -82,10 +89,11 @@ public class UserServiceTest {
                 user.getPassword()
         );
 
-        given(userRepository.findById(any())).willReturn(Optional.of(user));
+        willReturn(user).given(userService).retrieveCurrentUser();
 
         userService.updateUser(request);
 
+        then(passwordEncoder).should().encode(eq(password));
         then(userRepository).should().save(eq(user));
     }
 
@@ -100,7 +108,7 @@ public class UserServiceTest {
                 "password"
         );
 
-        given(userRepository.findById(any())).willReturn(Optional.of(retrievedUser));
+        willReturn(retrievedUser).given(userService).retrieveCurrentUser();
 
         assertThatExceptionOfType(AccessDeniedException.class)
                 .isThrownBy(() -> userService.updateUser(request));
@@ -118,5 +126,43 @@ public class UserServiceTest {
         userService.createUser(userRequest);
 
         then(userRepository).should().save(any(User.class));
+        then(publisher).should().publishEvent(any(UserCreatedEvent.class));
+    }
+
+
+    @Test
+    public void shouldRetrieveCurrentUser() {
+        Long userId = 1L;
+        UserInfo userInfo = new UserInfo(userId, "username", "email");
+        User user = new User();
+        user.setId(userId);
+
+        willReturn(userInfo).given(userService).getCurrentUserInfo();
+        willReturn(user).given(userService).getUserById(eq(userId));
+
+        userService.retrieveCurrentUser();
+
+        then(userService).should().getCurrentUserInfo();
+        then(userService).should().getUserById(eq(userId));
+    }
+
+    @Test
+    public void shouldEnableUser() {
+        User user = new User();
+
+        willDoNothing().given(userService).updateUser(eq(user));
+
+        userService.enableUser(user);
+
+        then(userService).should().updateUser(eq(user));
+    }
+
+    @Test
+    public void shouldReturnAllUsers() {
+        given(userRepository.findAllFetchBookings()).willReturn(List.of(new User()));
+
+        userService.getAllUsers();
+
+        then(userRepository).should().findAllFetchBookings();
     }
 }

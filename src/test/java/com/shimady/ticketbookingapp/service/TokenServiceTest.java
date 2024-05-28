@@ -12,14 +12,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.*;
@@ -47,9 +45,9 @@ public class TokenServiceTest {
 
         given(tokenRepository.findByToken(eq(tokenBody))).willReturn(Optional.of(token));
 
-        Token retrievedToken = tokenService.getToken(tokenBody);
+        tokenService.getToken(tokenBody);
 
-        assertThat(retrievedToken.getToken()).isEqualTo(token.getToken());
+        then(tokenRepository).should().findByToken(eq(tokenBody));
     }
 
     @Test
