@@ -20,7 +20,7 @@ public record UserRequest(
         @Password(message = "password should be at least 8 characters long " +
                 "and contain at least one lower case letter, " +
                 "upper case letter, " +
-                "digit " +
+                "digit, " +
                 "symbol from @#$%^&+=")
         String password
 ) {
