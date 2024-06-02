@@ -41,8 +41,8 @@ public class UserControllerTest {
         UserRequest request = new UserRequest(
                 1L,
                 "username",
-                "email",
-                "password"
+                "email@mail.com",
+                "Password@123"
         );
 
         mockMvc.perform(post("/user/signup")
@@ -85,8 +85,8 @@ public class UserControllerTest {
         UserRequest request = new UserRequest(
                 1L,
                 "username",
-                "email",
-                "password"
+                "email@mail.com",
+                "Password@123"
         );
 
         mockMvc.perform(put("/user")
