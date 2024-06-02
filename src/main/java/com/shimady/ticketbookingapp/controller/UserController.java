@@ -3,6 +3,7 @@ package com.shimady.ticketbookingapp.controller;
 import com.shimady.ticketbookingapp.controller.dto.UserInfo;
 import com.shimady.ticketbookingapp.controller.dto.UserRequest;
 import com.shimady.ticketbookingapp.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class UserController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public void signup(@RequestBody UserRequest request) {
+    public void signup(@Valid @RequestBody UserRequest request) {
         userService.createUser(request);
     }
 
@@ -31,7 +32,7 @@ public class UserController {
 
     @PutMapping("")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(@RequestBody UserRequest request) {
+    public void updateUser(@Valid @RequestBody UserRequest request) {
         userService.updateUser(request);
     }
 }
