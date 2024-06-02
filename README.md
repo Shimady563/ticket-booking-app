@@ -2,18 +2,23 @@
 
 ## Overview
 
-A restfull web application of ticket booking service. The core features include:
+A restfull web application of ticket booking service. 
+The core features include:
 
 - Account creation for faster ticket purchases,
 - Search for one-way flight tickets,
 - Search for two-way flight tickets,
-- Ticket booking and prepayment option
+- Ticket booking and reservation viewing,
+- Email notifications about current reservations
+
+Additional features include data validation, error handling.
 
 ## Technologies used
 
 - Application is based on Spring and Spring Boot
 - For data access I use PostgreSql, Hibernate and Spring Data JPA
-- For testing I use Spring's test options
+- For testing I use Spring Boot test options
+- For security I use Spring Security
 
 ## Future plans
 
@@ -21,9 +26,6 @@ After completing implementation of core futures,
 I plan to create api documentation with swagger.
 I will be adding more api description
 as I implement more endpoints.
-I also plan to add features
-to search and book tickets for hotels
-in addition to flight tickets booking.
 
 ## Api description
 
