@@ -12,6 +12,10 @@ The core features include:
 - Email notifications about current reservations
 
 Additional features include data validation, error handling.
+Workflows on github are set so that 
+tests are triggered on push and pull request to every branch
+and app image is deployed to docker hub
+after successful tests completion in main branch.
 
 ## Technologies used
 
@@ -19,6 +23,7 @@ Additional features include data validation, error handling.
 - For data access I use PostgreSql, Hibernate and Spring Data JPA
 - For testing I use Spring Boot test options
 - For security I use Spring Security
+- For CI/CD I user Docker, GitHub Actions
 
 ## Future plans
 
