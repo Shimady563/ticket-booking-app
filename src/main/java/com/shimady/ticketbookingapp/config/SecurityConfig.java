@@ -16,6 +16,17 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 @Configuration
 public class SecurityConfig {
 
+    private final String[] AUTH_WHITELIST_PATHS = new String[]{
+            "/user/signup",
+            "/tickets/*",
+            "/seats",
+            "/token",
+            "/token/update",
+            "/swagger-ui.html",
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -37,13 +48,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable) //disable csrf for postman testing
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(
-                                "/user/signup",
-                                "/tickets/*",
-                                "/seats",
-                                "/token",
-                                "/token/update"
-                        ).permitAll()
+                        .requestMatchers(AUTH_WHITELIST_PATHS).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/user/login").permitAll()
